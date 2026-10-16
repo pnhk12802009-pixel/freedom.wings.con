@@ -1,0 +1,2082 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FREEDOM WINGS II — Hệ Thống Quản Lý Clan Delta Force</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        neon: {
+                            DEFAULT: '#00FF66',
+                            dark: '#00CC52',
+                            light: '#33FF88',
+                            glow: 'rgba(0, 255, 102, 0.4)'
+                        },
+                        darkbg: '#0A0F0D',
+                        cardbg: '#121A15',
+                        bordercol: '#1E2E23'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background-color: #0A0F0D;
+            color: #E2E8F0;
+        }
+        h1, h2, h3, h4, .font-orbitron {
+            font-family: 'Orbitron', sans-serif;
+        }
+        .neon-glow {
+            box-shadow: 0 0 15px rgba(0, 255, 102, 0.3);
+        }
+        .neon-glow-lg {
+            box-shadow: 0 0 25px rgba(0, 255, 102, 0.5);
+        }
+        .neon-border {
+            border: 1px solid #00FF66;
+        }
+        .neon-text {
+            text-shadow: 0 0 10px rgba(0, 255, 102, 0.6);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0A0F0D;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1E2E23;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00FF66;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.8; filter: drop-shadow(0 0 8px rgba(0,255,102,0.6)); }
+            50% { opacity: 1; filter: drop-shadow(0 0 20px rgba(0,255,102,0.9)); }
+        }
+        .animate-glow {
+            animation: pulseGlow 3s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col bg-[#0A0F0D] text-slate-100 selection:bg-neon selection:text-black">
+
+    <!-- Top Navigation Header -->
+    <header class="sticky top-0 z-50 bg-[#0A0F0D]/95 backdrop-blur-md border-b border-[#1E2E23]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            
+            <!-- Left Brand Logo -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('home')">
+                <div class="w-12 h-12 rounded-lg bg-[#121A15] border border-neon flex items-center justify-center neon-glow">
+                    <i class="fa-solid fa-shield-halved text-neon text-2xl animate-glow"></i>
+                </div>
+                <div>
+                    <span class="block font-orbitron font-black text-lg tracking-wider text-white neon-text">FREEDOM WINGS</span>
+                    <span class="block text-xs font-bold text-neon tracking-widest">CLAN DELTA FORCE</span>
+                </div>
+            </div>
+
+            <!-- Central Nav Links (Desktop) -->
+            <nav class="hidden lg:flex items-center space-x-1 font-orbitron text-sm font-semibold">
+                <button onclick="switchTab('home')" id="nav-home" class="nav-btn px-4 py-2 rounded-lg text-neon bg-neon/10 border border-neon/50 transition duration-200">
+                    <i class="fa-solid fa-house mr-2"></i>TRANG CHỦ
+                </button>
+                <button onclick="switchTab('register')" id="nav-register" class="nav-btn px-4 py-2 rounded-lg text-slate-300 hover:text-neon hover:bg-neon/5 transition duration-200">
+                    <i class="fa-solid fa-user-plus mr-2"></i>ĐĂNG KÝ
+                </button>
+                <button onclick="switchTab('services')" id="nav-services" class="nav-btn px-4 py-2 rounded-lg text-slate-300 hover:text-neon hover:bg-neon/5 transition duration-200">
+                    <i class="fa-solid fa-store mr-2"></i>DỊCH VỤ
+                </button>
+                <button onclick="switchTab('profile')" id="nav-profile" class="nav-btn px-4 py-2 rounded-lg text-slate-300 hover:text-neon hover:bg-neon/5 transition duration-200">
+                    <i class="fa-solid fa-id-badge mr-2"></i>HỒ SƠ
+                </button>
+                <button onclick="switchTab('mailbox')" id="nav-mailbox" class="nav-btn relative px-4 py-2 rounded-lg text-slate-300 hover:text-neon hover:bg-neon/5 transition duration-200">
+                    <i class="fa-solid fa-envelope mr-2"></i>HÒM THƯ
+                    <span id="unread-mail-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full hidden">0</span>
+                </button>
+                <button onclick="switchTab('support')" id="nav-support" class="nav-btn px-4 py-2 rounded-lg text-slate-300 hover:text-neon hover:bg-neon/5 transition duration-200">
+                    <i class="fa-solid fa-circle-question mr-2"></i>HỖ TRỢ
+                </button>
+                <button onclick="switchTab('admin')" id="nav-admin" class="nav-btn hidden px-4 py-2 rounded-lg text-amber-400 bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500/20 transition duration-200">
+                    <i class="fa-solid fa-crown mr-2"></i>QUẢN TRỊ
+                </button>
+            </nav>
+
+            <!-- Right User Controls & Notifications -->
+            <div class="flex items-center space-x-4">
+                <!-- Notifications Bell -->
+                <div class="relative">
+                    <button onclick="toggleNotificationDropdown()" class="w-10 h-10 rounded-lg bg-[#121A15] border border-[#1E2E23] flex items-center justify-center text-slate-300 hover:text-neon hover:border-neon transition">
+                        <i class="fa-solid fa-bell text-lg"></i>
+                        <span id="notification-dot" class="absolute top-2 right-2 w-2.5 h-2.5 bg-neon rounded-full animate-ping hidden"></span>
+                        <span id="notification-count" class="absolute -top-1 -right-1 bg-neon text-black font-bold text-xs w-5 h-5 rounded-full flex items-center justify-center hidden">0</span>
+                    </button>
+                    <!-- Notification Popup -->
+                    <div id="notification-dropdown" class="hidden absolute right-0 mt-3 w-80 bg-[#121A15] border border-neon/30 rounded-xl shadow-2xl p-4 z-50">
+                        <div class="flex justify-between items-center mb-3 border-b border-[#1E2E23] pb-2">
+                            <span class="font-orbitron font-bold text-sm text-neon">THÔNG BÁO HỆ THỐNG</span>
+                            <button onclick="markAllNotificationsRead()" class="text-xs text-slate-400 hover:text-neon">Đã đọc tất cả</button>
+                        </div>
+                        <div id="notification-list" class="space-y-2 max-h-64 overflow-y-auto">
+                            <div class="text-xs text-slate-400 text-center py-4">Không có thông báo mới</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Auth Section -->
+                <div id="auth-container">
+                    <!-- Unauthenticated Buttons -->
+                    <div id="logged-out-controls" class="flex items-center space-x-2">
+                        <button onclick="openAuthModal('login')" class="px-4 py-2 rounded-lg font-orbitron text-xs font-bold text-neon border border-neon/50 hover:bg-neon hover:text-black transition duration-200">
+                            ĐĂNG NHẬP
+                        </button>
+                        <button onclick="openAuthModal('register')" class="hidden sm:inline-flex px-4 py-2 rounded-lg font-orbitron text-xs font-bold bg-neon text-black hover:bg-neon-dark transition duration-200 shadow-lg shadow-neon/20">
+                            ĐĂNG KÝ
+                        </button>
+                    </div>
+                    <!-- Authenticated User Profile Dropdown -->
+                    <div id="logged-in-controls" class="hidden relative">
+                        <button onclick="toggleUserDropdown()" class="flex items-center space-x-3 bg-[#121A15] border border-[#1E2E23] hover:border-neon px-3 py-1.5 rounded-xl transition">
+                            <img id="user-avatar-display" src="https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=150" alt="Avatar" class="w-8 h-8 rounded-lg object-cover border border-neon">
+                            <div class="text-left hidden sm:block">
+                                <span id="user-name-display" class="block font-bold text-xs text-white">Anhung123</span>
+                                <span id="user-role-display" class="block text-[10px] text-neon uppercase">Owner</span>
+                            </div>
+                            <i class="fa-solid fa-chevron-down text-xs text-slate-400 ml-1"></i>
+                        </button>
+                        <!-- User Menu Dropdown -->
+                        <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-56 bg-[#121A15] border border-neon/30 rounded-xl shadow-2xl py-2 z-50 font-orbitron text-xs">
+                            <div class="px-4 py-2 border-b border-[#1E2E23]">
+                                <span class="block text-slate-400">Đang đăng nhập với</span>
+                                <span id="dropdown-username" class="font-bold text-neon">Anhung123</span>
+                            </div>
+                            <button onclick="switchTab('profile'); toggleUserDropdown();" class="w-full text-left px-4 py-2 text-slate-300 hover:bg-neon/10 hover:text-neon flex items-center">
+                                <i class="fa-solid fa-user mr-2"></i> Hồ sơ cá nhân
+                            </button>
+                            <button onclick="switchTab('mailbox'); toggleUserDropdown();" class="w-full text-left px-4 py-2 text-slate-300 hover:bg-neon/10 hover:text-neon flex items-center">
+                                <i class="fa-solid fa-envelope mr-2"></i> Hòm thư của tôi
+                            </button>
+                            <div class="border-t border-[#1E2E23] my-1"></div>
+                            <button onclick="logoutUser()" class="w-full text-left px-4 py-2 text-red-400 hover:bg-red-500/10 flex items-center font-bold">
+                                <i class="fa-solid fa-right-from-bracket mr-2"></i> Đăng xuất
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu Toggle Button -->
+                <button onclick="toggleMobileMenu()" class="lg:hidden w-10 h-10 rounded-lg bg-[#121A15] border border-[#1E2E23] flex items-center justify-center text-slate-300 hover:text-neon">
+                    <i class="fa-solid fa-bars text-lg"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobile-menu" class="hidden lg:hidden bg-[#121A15] border-b border-[#1E2E23] px-4 py-4 space-y-2 font-orbitron text-sm">
+            <button onclick="switchTab('home'); toggleMobileMenu();" class="w-full text-left px-4 py-2.5 rounded-lg text-slate-300 hover:text-neon hover:bg-neon/10 flex items-center">
+                <i class="fa-solid fa-house mr-3 text-neon"></i>TRANG CHỦ
+            </button>
+            <button onclick="switchTab('register'); toggleMobileMenu();" class="w-full text-left px-4 py-2.5 rounded-lg text-slate-300 hover:text-neon hover:bg-neon/10 flex items-center">
+                <i class="fa-solid fa-user-plus mr-3 text-neon"></i>ĐĂNG KÝ
+            </button>
+            <button onclick="switchTab('services'); toggleMobileMenu();" class="w-full text-left px-4 py-2.5 rounded-lg text-slate-300 hover:text-neon hover:bg-neon/10 flex items-center">
+                <i class="fa-solid fa-store mr-3 text-neon"></i>DỊCH VỤ
+            </button>
+            <button onclick="switchTab('profile'); toggleMobileMenu();" class="w-full text-left px-4 py-2.5 rounded-lg text-slate-300 hover:text-neon hover:bg-neon/10 flex items-center">
+                <i class="fa-solid fa-id-badge mr-3 text-neon"></i>HỒ SƠ
+            </button>
+            <button onclick="switchTab('mailbox'); toggleMobileMenu();" class="w-full text-left px-4 py-2.5 rounded-lg text-slate-300 hover:text-neon hover:bg-neon/10 flex items-center">
+                <i class="fa-solid fa-envelope mr-3 text-neon"></i>HÒM THƯ
+            </button>
+            <button onclick="switchTab('support'); toggleMobileMenu();" class="w-full text-left px-4 py-2.5 rounded-lg text-slate-300 hover:text-neon hover:bg-neon/10 flex items-center">
+                <i class="fa-solid fa-circle-question mr-3 text-neon"></i>HỖ TRỢ
+            </button>
+            <button id="mobile-admin-btn" onclick="switchTab('admin'); toggleMobileMenu();" class="hidden w-full text-left px-4 py-2.5 rounded-lg text-amber-400 bg-amber-500/10 border border-amber-500/30 flex items-center">
+                <i class="fa-solid fa-crown mr-3"></i>QUẢN TRỊ HỆ THỐNG
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow">
+
+        <!-- ================= TAB 1: TRANG CHỦ ================= -->
+        <section id="tab-home" class="tab-content py-8">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+                
+                <!-- Hero Banner Slider -->
+                <div class="relative rounded-2xl overflow-hidden border border-[#1E2E23] bg-[#121A15] shadow-2xl">
+                    <div id="banner-slider-container" class="relative h-[400px] sm:h-[500px] w-full flex items-center">
+                        <!-- Dynamic Banner Slide inserted via JS -->
+                        <div class="absolute inset-0 bg-cover bg-center transition-all duration-700" style="background-image: linear-gradient(to right, rgba(10,15,13,0.9), rgba(10,15,13,0.4)), url('https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1600');">
+                            <div class="max-w-2xl p-8 sm:p-16 flex flex-col justify-center h-full space-y-6">
+                                <span class="inline-block px-3 py-1 bg-neon/20 border border-neon text-neon text-xs font-orbitron font-bold rounded-full w-max">CLAN OFFICIAL #1</span>
+                                <h1 class="text-3xl sm:text-5xl font-orbitron font-black text-white leading-tight">FREEDOM WINGS II <br><span class="text-neon">DELTA FORCE ELITE</span></h1>
+                                <p class="text-slate-300 text-sm sm:text-base">Hệ thống quản lý clan toàn diện, chuyên nghiệp. Nơi quy tụ các tuyển thủ đỉnh cao dòng game bắn súng chiến thuật Delta Force.</p>
+                                <div class="flex space-x-4 pt-2">
+                                    <button onclick="switchTab('services')" class="px-6 py-3 rounded-xl bg-neon text-black font-orbitron font-bold text-sm hover:bg-neon-dark shadow-lg shadow-neon/30 transition">KHÁM PHÁ DỊCH VỤ</button>
+                                    <button onclick="switchTab('register')" class="px-6 py-3 rounded-xl border border-neon text-neon font-orbitron font-bold text-sm hover:bg-neon/10 transition">ĐĂNG KÝ THÀNH VIÊN</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Clan Statistics Grid -->
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                    <div class="bg-[#121A15] border border-[#1E2E23] p-6 rounded-xl text-center hover:border-neon transition">
+                        <i class="fa-solid fa-users text-neon text-3xl mb-3"></i>
+                        <h3 id="stat-members" class="font-orbitron font-black text-2xl text-white">1,248</h3>
+                        <p class="text-xs text-slate-400 mt-1 uppercase font-semibold">Tổng Thành Viên</p>
+                    </div>
+                    <div class="bg-[#121A15] border border-[#1E2E23] p-6 rounded-xl text-center hover:border-neon transition">
+                        <i class="fa-solid fa-crosshairs text-neon text-3xl mb-3"></i>
+                        <h3 id="stat-players" class="font-orbitron font-black text-2xl text-white">48</h3>
+                        <p class="text-xs text-slate-400 mt-1 uppercase font-semibold">Tuyển Thủ Active</p>
+                    </div>
+                    <div class="bg-[#121A15] border border-[#1E2E23] p-6 rounded-xl text-center hover:border-neon transition">
+                        <i class="fa-solid fa-store text-neon text-3xl mb-3"></i>
+                        <h3 id="stat-services" class="font-orbitron font-black text-2xl text-white">6</h3>
+                        <p class="text-xs text-slate-400 mt-1 uppercase font-semibold">Dịch Vụ Mở</p>
+                    </div>
+                    <div class="bg-[#121A15] border border-[#1E2E23] p-6 rounded-xl text-center hover:border-neon transition">
+                        <i class="fa-solid fa-trophy text-neon text-3xl mb-3"></i>
+                        <h3 id="stat-events" class="font-orbitron font-black text-2xl text-white">32</h3>
+                        <p class="text-xs text-slate-400 mt-1 uppercase font-semibold">Sự Kiện Tổ Chức</p>
+                    </div>
+                    <div class="col-span-2 md:col-span-1 bg-[#121A15] border border-[#1E2E23] p-6 rounded-xl text-center hover:border-neon transition">
+                        <i class="fa-solid fa-circle-check text-neon text-3xl mb-3"></i>
+                        <h3 id="stat-orders" class="font-orbitron font-black text-2xl text-white">856</h3>
+                        <p class="text-xs text-slate-400 mt-1 uppercase font-semibold">Đơn Hoàn Thành</p>
+                    </div>
+                </div>
+
+                <!-- Featured Announcements & Pinned Info -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Announcements Column (2 span) -->
+                    <div class="lg:col-span-2 space-y-6">
+                        <div class="flex justify-between items-center border-b border-[#1E2E23] pb-4">
+                            <h2 class="font-orbitron font-bold text-xl text-white flex items-center">
+                                <i class="fa-solid fa-bullhorn text-neon mr-3"></i>THÔNG BÁO & SỰ KIỆN
+                            </h2>
+                            <span class="text-xs text-neon font-bold uppercase tracking-wider">Cập Nhật Mới Nhất</span>
+                        </div>
+                        <div id="home-announcements-container" class="space-y-4">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Official Links & Discord Column (1 span) -->
+                    <div class="space-y-6">
+                        <div class="border-b border-[#1E2E23] pb-4">
+                            <h2 class="font-orbitron font-bold text-xl text-white flex items-center">
+                                <i class="fa-solid fa-link text-neon mr-3"></i>KÊNH CHÍNH THỨC
+                            </h2>
+                        </div>
+                        <div class="space-y-3">
+                            <a href="https://www.tiktok.com/@freedomwingsii0?_r=1&_t=ZS-9AazdT1ASPt" target="_blank" class="flex items-center justify-between p-4 bg-[#121A15] border border-[#1E2E23] rounded-xl hover:border-neon transition group">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 rounded-lg bg-black flex items-center justify-center text-neon border border-neon/30 group-hover:neon-glow">
+                                        <i class="fa-brands fa-tiktok text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-sm text-white group-hover:text-neon">TikTok Chính Thức</h4>
+                                        <span class="text-xs text-slate-400">@freedomwingsii0</span>
+                                    </div>
+                                </div>
+                                <i class="fa-solid fa-arrow-up-right-from-square text-xs text-slate-400 group-hover:text-neon"></i>
+                            </a>
+
+                            <a href="https://www.facebook.com/share/g/1AHdXaxk2e/?mibextid=wwXIfr" target="_blank" class="flex items-center justify-between p-4 bg-[#121A15] border border-[#1E2E23] rounded-xl hover:border-neon transition group">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 rounded-lg bg-blue-600/20 flex items-center justify-center text-blue-400 border border-blue-500/30">
+                                        <i class="fa-brands fa-facebook text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-sm text-white group-hover:text-blue-400">Nhóm Facebook</h4>
+                                        <span class="text-xs text-slate-400">Cộng đồng Delta Force FW</span>
+                                    </div>
+                                </div>
+                                <i class="fa-solid fa-arrow-up-right-from-square text-xs text-slate-400 group-hover:text-blue-400"></i>
+                            </a>
+
+                            <a href="https://discord.gg/7XyGU6gKxF" target="_blank" class="flex items-center justify-between p-4 bg-[#121A15] border border-[#1E2E23] rounded-xl hover:border-neon transition group">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 rounded-lg bg-indigo-600/20 flex items-center justify-center text-indigo-400 border border-indigo-500/30">
+                                        <i class="fa-brands fa-discord text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-sm text-white group-hover:text-indigo-400">Discord Nhánh 2</h4>
+                                        <span class="text-xs text-slate-400">FREEDOM WINGS II</span>
+                                    </div>
+                                </div>
+                                <i class="fa-solid fa-arrow-up-right-from-square text-xs text-slate-400 group-hover:text-indigo-400"></i>
+                            </a>
+
+                            <a href="https://discord.gg/58XRE4XJMG" target="_blank" class="flex items-center justify-between p-4 bg-[#121A15] border border-[#1E2E23] rounded-xl hover:border-neon transition group">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 rounded-lg bg-indigo-600/20 flex items-center justify-center text-indigo-400 border border-indigo-500/30">
+                                        <i class="fa-brands fa-discord text-xl"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-sm text-white group-hover:text-indigo-400">Discord Nhánh 1</h4>
+                                        <span class="text-xs text-slate-400">FREEDOM WINGS HQ</span>
+                                    </div>
+                                </div>
+                                <i class="fa-solid fa-arrow-up-right-from-square text-xs text-slate-400 group-hover:text-indigo-400"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pinned Featured Services -->
+                <div class="space-y-6">
+                    <div class="flex justify-between items-center border-b border-[#1E2E23] pb-4">
+                        <h2 class="font-orbitron font-bold text-xl text-white flex items-center">
+                            <i class="fa-solid fa-fire text-neon mr-3"></i>DỊCH VỤ NỔI BẬT
+                        </h2>
+                        <button onclick="switchTab('services')" class="text-xs font-orbitron font-bold text-neon hover:underline">Xem tất cả dịch vụ &rarr;</button>
+                    </div>
+                    <div id="home-featured-services" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Populated via JS -->
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ================= TAB 2: ĐĂNG KÝ CLAN & TUYỂN THỦ ================= -->
+        <section id="tab-register" class="tab-content hidden py-8">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+                
+                <div class="text-center max-w-2xl mx-auto space-y-3">
+                    <span class="px-3 py-1 bg-neon/20 border border-neon text-neon text-xs font-orbitron font-bold rounded-full">TUYỂN SINH & GIA NHẬP</span>
+                    <h2 class="text-3xl sm:text-4xl font-orbitron font-black text-white">TRỞ THÀNH MỘT PHẦN CỦA FREEDOM WINGS II</h2>
+                    <p class="text-slate-400 text-sm">Lựa chọn hình thức đăng ký phù hợp bên dưới để gia nhập đại gia đình clan Delta Force chuyên nghiệp.</p>
+                </div>
+
+                <!-- 3 Cards Selection Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Card 1: Clan Member Registration -->
+                    <div class="bg-[#121A15] border border-[#1E2E23] rounded-2xl overflow-hidden flex flex-col justify-between hover:border-neon transition group shadow-xl">
+                        <div>
+                            <div class="h-48 overflow-hidden relative">
+                                <img src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=600" alt="Clan Member" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                                <div class="absolute inset-0 bg-gradient-to-t from-[#121A15] via-transparent"></div>
+                                <span class="absolute top-4 left-4 bg-neon text-black font-orbitron font-black text-xs px-3 py-1 rounded-lg">THÀNH VIÊN</span>
+                            </div>
+                            <div class="p-6 space-y-4">
+                                <h3 class="font-orbitron font-bold text-xl text-white">Đăng Ký Thành Viên Clan</h3>
+                                <p class="text-xs text-slate-300 leading-relaxed">Gia nhập cộng đồng chính thức, tham gia hoạt động chung, giao lưu và nhận hỗ trợ từ các tuyển thủ kỳ cựu.</p>
+                                <div class="bg-black/40 border border-neon/20 p-3 rounded-xl text-xs text-slate-300">
+                                    <span class="text-neon font-bold block mb-1">Quy định đổi tên:</span>
+                                    Sau khi duyệt, cần đổi tên theo định dạng <code class="text-neon font-bold">FW・Tên</code>.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-6 pt-0">
+                            <button onclick="openRegistrationModal('member')" class="w-full py-3 rounded-xl bg-neon text-black font-orbitron font-bold text-xs hover:bg-neon-dark shadow-lg shadow-neon/20 transition">
+                                ĐĂNG KÝ NGAY <i class="fa-solid fa-arrow-right ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Pro Player Registration -->
+                    <div class="bg-[#121A15] border border-[#1E2E23] rounded-2xl overflow-hidden flex flex-col justify-between hover:border-neon transition group shadow-xl">
+                        <div>
+                            <div class="h-48 overflow-hidden relative">
+                                <img src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=600" alt="Pro Player" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                                <div class="absolute inset-0 bg-gradient-to-t from-[#121A15] via-transparent"></div>
+                                <span class="absolute top-4 left-4 bg-amber-500 text-black font-orbitron font-black text-xs px-3 py-1 rounded-lg">TUYỂN THỦ</span>
+                            </div>
+                            <div class="p-6 space-y-4">
+                                <h3 class="font-orbitron font-bold text-xl text-white">Đăng Ký Tuyển Thủ Thi Đấu</h3>
+                                <p class="text-xs text-slate-300 leading-relaxed">Tham gia các đội hình thi đấu Chiến trường, Chiến dịch hoặc Kích nổ chuyên nghiệp của Clan.</p>
+                                <div class="bg-black/40 border border-amber-500/20 p-3 rounded-xl text-xs text-slate-300">
+                                    <span class="text-amber-400 font-bold block mb-1">Quy định đổi tên:</span>
+                                    Định dạng thi đấu: <code class="text-amber-400 font-bold">FW・Tên・T</code>. Yêu cầu 3 ảnh hồ sơ game.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-6 pt-0">
+                            <button onclick="openRegistrationModal('player')" class="w-full py-3 rounded-xl bg-amber-500 text-black font-orbitron font-bold text-xs hover:bg-amber-400 shadow-lg shadow-amber-500/20 transition">
+                                ỨNG TUYỂN NGAY <i class="fa-solid fa-arrow-right ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Content Creator Registration -->
+                    <div class="bg-[#121A15] border border-[#1E2E23] rounded-2xl overflow-hidden flex flex-col justify-between hover:border-neon transition group shadow-xl">
+                        <div>
+                            <div class="h-48 overflow-hidden relative">
+                                <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600" alt="Creator" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                                <div class="absolute inset-0 bg-gradient-to-t from-[#121A15] via-transparent"></div>
+                                <span class="absolute top-4 left-4 bg-purple-500 text-white font-orbitron font-black text-xs px-3 py-1 rounded-lg">CREATOR</span>
+                            </div>
+                            <div class="p-6 space-y-4">
+                                <h3 class="font-orbitron font-bold text-xl text-white">Đăng Ký Content Creator</h3>
+                                <p class="text-xs text-slate-300 leading-relaxed">Hợp tác sáng tạo nội dung, stream và quảng bá hình ảnh cho Clan Delta Force cùng Garena.</p>
+                                <div class="bg-black/40 border border-purple-500/20 p-3 rounded-xl text-xs text-slate-300">
+                                    <span class="text-purple-400 font-bold block mb-1">Hệ thống liên kết:</span>
+                                    Chuyển hướng trực tiếp đến cổng đăng ký chính thức của nhà phát hành.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-6 pt-0">
+                            <a href="https://creator.deltaforce.garena.com" target="_blank" class="block w-full text-center py-3 rounded-xl bg-purple-600 text-white font-orbitron font-bold text-xs hover:bg-purple-500 shadow-lg shadow-purple-600/20 transition">
+                                ĐĂNG KÝ CREATOR <i class="fa-solid fa-external-link ml-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Registration Tracking Section -->
+                <div class="bg-[#121A15] border border-[#1E2E23] rounded-2xl p-6 sm:p-8 space-y-6">
+                    <h3 class="font-orbitron font-bold text-lg text-white flex items-center">
+                        <i class="fa-solid fa-clipboard-list text-neon mr-3"></i>HỒ SƠ ĐĂNG KÝ CỦA TÔI
+                    </h3>
+                    <div id="my-registrations-container" class="space-y-4">
+                        <div class="text-xs text-slate-400 text-center py-8">Vui lòng đăng nhập để xem trạng thái hồ sơ đăng ký của bạn.</div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ================= TAB 3: DỊCH VỤ CLAN ================= -->
+        <section id="tab-services" class="tab-content hidden py-8">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+                
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-[#1E2E23] pb-6">
+                    <div>
+                        <span class="px-3 py-1 bg-neon/20 border border-neon text-neon text-xs font-orbitron font-bold rounded-full">CLAN STORE</span>
+                        <h2 class="text-3xl font-orbitron font-black text-white mt-2">DỊCH VỤ & HỖ TRỢ GAME</h2>
+                        <p class="text-slate-400 text-sm">Cung cấp dịch vụ cày két, kéo lão bản uy tín, nhanh chóng từ các tuyển thủ top đầu.</p>
+                    </div>
+                    <!-- Category Filters -->
+                    <div class="flex flex-wrap gap-2 font-orbitron text-xs">
+                        <button onclick="filterServices('all')" id="filter-btn-all" class="px-4 py-2 rounded-xl bg-neon text-black font-bold transition">TẤT CẢ</button>
+                        <button onclick="filterServices('cay-thue')" id="filter-btn-cay-thue" class="px-4 py-2 rounded-xl bg-[#121A15] border border-[#1E2E23] text-slate-300 hover:border-neon transition">CÀY THUÊ</button>
+                        <button onclick="filterServices('keo-lao-ban')" id="filter-btn-keo-lao-ban" class="px-4 py-2 rounded-xl bg-[#121A15] border border-[#1E2E23] text-slate-300 hover:border-neon transition">KÉO LÃO BẢN</button>
+                    </div>
+                </div>
+
+                <!-- Services Grid -->
+                <div id="services-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Populated via JS -->
+                </div>
+
+                <!-- Order History Section -->
+                <div class="bg-[#121A15] border border-[#1E2E23] rounded-2xl p-6 sm:p-8 space-y-6 mt-12">
+                    <h3 class="font-orbitron font-bold text-lg text-white flex items-center">
+                        <i class="fa-solid fa-receipt text-neon mr-3"></i>LỊCH SỬ ĐƠN HÀNG CỦA BẠN
+                    </h3>
+                    <div id="my-orders-container" class="space-y-4">
+                        <div class="text-xs text-slate-400 text-center py-6">Vui lòng đăng nhập để theo dõi các đơn hàng dịch vụ.</div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ================= TAB 4: HỒ SƠ ================= -->
+        <section id="tab-profile" class="tab-content hidden py-8">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+                
+                <div id="profile-unauth-notice" class="bg-[#121A15] border border-red-500/30 rounded-2xl p-8 text-center space-y-4">
+                    <i class="fa-solid fa-lock text-red-400 text-4xl"></i>
+                    <h3 class="font-orbitron font-bold text-xl text-white">YÊU CẦU ĐĂNG NHẬP</h3>
+                    <p class="text-slate-400 text-sm max-w-md mx-auto">Bạn cần đăng nhập vào hệ thống để xem và chỉnh sửa thông tin hồ sơ cá nhân.</p>
+                    <button onclick="openAuthModal('login')" class="px-6 py-2.5 rounded-xl bg-neon text-black font-orbitron font-bold text-xs hover:bg-neon-dark transition">ĐĂNG NHẬP NGAY</button>
+                </div>
+
+                <div id="profile-auth-content" class="hidden space-y-8">
+                    <!-- Profile Header Card -->
+                    <div class="bg-[#121A15] border border-[#1E2E23] rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row items-center gap-6 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-64 h-64 bg-neon/5 rounded-full blur-3xl pointer-events-none"></div>
+                        <div class="relative">
+                            <img id="profile-avatar" src="https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=200" alt="Avatar" class="w-24 h-24 sm:w-32 sm:h-32 rounded-2xl object-cover border-2 border-neon neon-glow">
+                            <button onclick="openEditProfileModal()" class="absolute bottom-2 right-2 w-8 h-8 bg-neon text-black rounded-lg flex items-center justify-center font-bold hover:bg-neon-dark transition shadow">
+                                <i class="fa-solid fa-pen text-xs"></i>
+                            </button>
+                        </div>
+                        <div class="text-center md:text-left space-y-2 flex-grow">
+                            <div class="flex flex-col md:flex-row md:items-center gap-2">
+                                <h2 id="profile-fullname" class="font-orbitron font-bold text-2xl text-white">An Hung</h2>
+                                <span id="profile-role-badge" class="px-3 py-0.5 rounded-full text-xs font-orbitron font-bold bg-neon text-black w-max mx-auto md:mx-0">OWNER</span>
+                            </div>
+                            <p class="text-slate-400 text-xs font-orbitron">Tên đăng nhập: <span id="profile-username" class="text-white font-bold">Anhung123</span></p>
+                            <p class="text-slate-400 text-xs">Gmail: <span id="profile-email" class="text-white">phamanhung2009@gmail.com</span></p>
+                            <div class="flex flex-wrap gap-4 pt-2 text-xs text-slate-300 justify-center md:justify-start">
+                                <div><i class="fa-solid fa-id-card text-neon mr-1"></i> Mã TV: <span id="profile-code" class="text-white font-bold">FW-8888</span></div>
+                                <div><i class="fa-solid fa-calendar text-neon mr-1"></i> Ngày tham gia: <span id="profile-joindate" class="text-white">20/08/2024</span></div>
+                                <div><i class="fa-solid fa-shield text-neon mr-1"></i> Trạng thái: <span id="profile-status" class="text-neon font-bold">Đang hoạt động</span></div>
+                            </div>
+                        </div>
+                        <div>
+                            <button onclick="openEditProfileModal()" class="px-5 py-2.5 rounded-xl border border-neon text-neon font-orbitron font-bold text-xs hover:bg-neon/10 transition">CHỈNH SỬA HỒ SƠ</button>
+                        </div>
+                    </div>
+
+                    <!-- Personal Activity / Summary Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-[#121A15] border border-[#1E2E23] rounded-2xl p-6 space-y-4">
+                            <h3 class="font-orbitron font-bold text-base text-white flex items-center">
+                                <i class="fa-solid fa-file-lines text-neon mr-2"></i>Đăng Ký Đã Gửi
+                            </h3>
+                            <div id="profile-my-regs" class="space-y-3 max-h-60 overflow-y-auto">
+                                <!-- Populated via JS -->
+                            </div>
+                        </div>
+                        <div class="bg-[#121A15] border border-[#1E2E23] rounded-2xl p-6 space-y-4">
+                            <h3 class="font-orbitron font-bold text-base text-white flex items-center">
+                                <i class="fa-solid fa-bag-shopping text-neon mr-2"></i>Đơn Hàng Dịch Vụ Của Bạn
+                            </h3>
+                            <div id="profile-my-orders" class="space-y-3 max-h-60 overflow-y-auto">
+                                <!-- Populated via JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ================= TAB 5: HÒM THƯ ================= -->
+        <section id="tab-mailbox" class="tab-content hidden py-8">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+                
+                <div class="flex justify-between items-center border-b border-[#1E2E23] pb-6">
+                    <div>
+                        <span class="px-3 py-1 bg-neon/20 border border-neon text-neon text-xs font-orbitron font-bold rounded-full">INBOX & THÔNG BÁO</span>
+                        <h2 class="text-3xl font-orbitron font-black text-white mt-2">HÒM THƯ & TIN NHẮN</h2>
+                    </div>
+                    <button onclick="openNewMessageModal()" class="px-4 py-2.5 rounded-xl bg-neon text-black font-orbitron font-bold text-xs hover:bg-neon-dark shadow-lg shadow-neon/20 transition">
+                        <i class="fa-solid fa-pen-to-square mr-2"></i>SOẠN TIN NHẮN
+                    </button>
+                </div>
+
+                <div id="mailbox-unauth" class="bg-[#121A15] border border-red-500/30 rounded-2xl p-8 text-center space-y-4">
+                    <i class="fa-solid fa-lock text-red-400 text-4xl"></i>
+                    <h3 class="font-orbitron font-bold text-xl text-white">YÊU CẦU ĐĂNG NHẬP</h3>
+                    <p class="text-slate-400 text-sm">Vui lòng đăng nhập để truy cập hòm thư nội bộ và tin nhắn với ban quản trị.</p>
+                </div>
+
+                <div id="mailbox-auth-content" class="hidden grid grid-cols-1 lg:grid-cols-4 gap-6">
+                    <!-- Mail Categories Sidebar -->
+                    <div class="bg-[#121A15] border border-[#1E2E23] rounded-2xl p-4 space-y-2 font-orbitron text-xs">
+                        <button onclick="filterMailbox('all')" id="mail-tab-all" class="w-full text-left px-4 py-3 rounded-xl bg-neon/10 border border-neon/50 text-neon font-bold flex items-center justify-between transition">
+                            <span><i class="fa-solid fa-inbox mr-3"></i> Tất cả thư</span>
+                            <span id="badge-mail-all" class="bg-neon text-black px-2 py-0.5 rounded-full text-[10px]">0</span>
+                        </button>
+                        <button onclick="filterMailbox('unread')" id="mail-tab-unread" class="w-full text-left px-4 py-3 rounded-xl hover:bg-neon/5 text-slate-300 flex items-center justify-between transition">
+                            <span><i class="fa-solid fa-envelope mr-3"></i> Chưa đọc</span>
+                            <span id="badge-mail-unread" class="bg-red-500 text-white px-2 py-0.5 rounded-full text-[10px]">0</span>
+                        </button>
+                        <button onclick="filterMailbox('system')" id="mail-tab-system" class="w-full text-left px-4 py-3 rounded-xl hover:bg-neon/5 text-slate-300 flex items-center justify-between transition">
+                            <span><i class="fa-solid fa-bell mr-3"></i> Hệ thống</span>
+                        </button>
+                        <button onclick="filterMailbox('admin')" id="mail-tab-admin" class="w-full text-left px-4 py-3 rounded-xl hover:bg-neon/5 text-slate-300 flex items-center justify-between transition">
+                            <span><i class="fa-solid fa-user-shield mr-3"></i> Từ Admin</span>
+                        </button>
+                        <button onclick="filterMailbox('orders')" id="mail-tab-orders" class="w-full text-left px-4 py-3 rounded-xl hover:bg-neon/5 text-slate-300 flex items-center justify-between transition">
+                            <span><i class="fa-solid fa-bag-shopping mr-3"></i> Đơn hàng</span>
+                        </button>
+                    </div>
+
+                    <!-- Mail List & Detail Viewer (3 span) -->
+                    <div class="lg:col-span-3 bg-[#121A15] border border-[#1E2E23] rounded-2xl p-6 space-y-6">
+                        <div id="mailbox-list" class="space-y-3">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ================= TAB 6: TRỢ GIÚP & HỖ TRỢ ================= -->
+        <section id="tab-support" class="tab-content hidden py-8">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+                
+                <div class="text-center space-y-3">
+                    <span class="px-3 py-1 bg-neon/20 border border-neon text-neon text-xs font-orbitron font-bold rounded-full">HELP CENTER</span>
+                    <h2 class="text-3xl font-orbitron font-black text-white">TRUNG TÂM HỖ TRỢ & HƯỚNG DẪN</h2>
+                    <p class="text-slate-400 text-sm">Giải đáp mọi thắc mắc và hướng dẫn sử dụng hệ thống clan FREEDOM WINGS II.</p>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="bg-[#121A15] border border-[#1E2E23] rounded-2xl p-6 space-y-3">
+                        <h3 class="font-orbitron font-bold text-lg text-white flex items-center">
+                            <i class="fa-solid fa-circle-question text-neon mr-3"></i>1. Hướng dẫn đăng ký thành viên Clan
+                        </h3>
+                        <p class="text-slate-300 text-sm leading-relaxed">Truy cập mục <strong>Đăng Ký</strong>, điền đầy đủ họ tên, UID game, ảnh hồ sơ và xác nhận đã đọc nội quy. Sau khi được duyệt, thành viên bắt buộc phải đổi tên nhân vật theo định dạng <code class="text-neon font-bold">FW・Tên</code>.</p>
+                    </div>
+                    <div class="bg-[#121A15] border border-[#1E2E23] rounded-2xl p-6 space-y-3">
+                        <h3 class="font-orbitron font-bold text-lg text-white flex items-center">
+                            <i class="fa-solid fa-crosshairs text-neon mr-3"></i>2. Hướng dẫn đăng ký tuyển thủ thi đấu
+                        </h3>
+                        <p class="text-slate-300 text-sm leading-relaxed">Chọn thẻ Tuyển thủ, cung cấp đầy đủ thông tin, chọn chế độ (Chiến trường, Chiến dịch, Kích nổ) và tải lên 3 ảnh hồ sơ game yêu cầu (Ảnh chính, K/D, Rank). Định dạng tên thi đấu: <code class="text-amber-400 font-bold">FW・Tên・T</code>.</p>
+                    </div>
+                    <div class="bg-[#121A15] border border-[#1E2E23] rounded-2xl p-6 space-y-3">
+                        <h3 class="font-orbitron font-bold text-lg text-white flex items-center">
+                            <i class="fa-solid fa-store text-neon mr-3"></i>3. Quy trình đặt dịch vụ cày thuê & kéo lão bản
+                        </h3>
+                        <p class="text-slate-300 text-sm leading-relaxed">Chọn dịch vụ trong mục <strong>Dịch Vụ</strong>, bấm Đặt Dịch Vụ và nhập thông tin nhân vật, yêu cầu riêng. Hệ thống sẽ ghi nhận đơn hàng với mức giá cố định tại thời điểm đặt và gửi thông báo đến bộ phận hỗ trợ đơn.</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ================= TAB 7: TRUNG TÂM QUẢN TRỊ (ADMIN DASHBOARD) ================= -->
+        <section id="tab-admin" class="tab-content hidden py-8">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+                
+                <!-- Admin Header Notice -->
+                <div class="bg-gradient-to-r from-amber-500/20 via-[#121A15] to-[#121A15] border border-amber-500/40 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-xl bg-amber-500/20 border border-amber-500 flex items-center justify-center text-amber-400 text-2xl">
+                            <i class="fa-solid fa-crown"></i>
+                        </div>
+                        <div>
+                            <h2 class="font-orbitron font-black text-xl text-white">TRUNG TÂM QUẢN TRỊ HỆ THỐNG</h2>
+                            <p class="text-xs text-amber-400 font-bold">Quyền hạn tối cao: Quản lý toàn bộ thành viên, dịch vụ, đơn hàng, tài khoản và thông báo.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <span id="admin-current-user-badge" class="px-4 py-1.5 rounded-xl bg-amber-500 text-black font-orbitron font-bold text-xs">Owner: Anhung123</span>
+                    </div>
+                </div>
+
+                <!-- Admin Tabs Navigation -->
+                <div class="flex flex-wrap gap-2 font-orbitron text-xs border-b border-[#1E2E23] pb-4">
+                    <button onclick="switchAdminSubTab('overview')" id="adm-tab-overview" class="adm-sub-btn px-4 py-2.5 rounded-xl bg-neon text-black font-bold transition">TỔNG QUAN</button>
+                    <button onclick="switchAdminSubTab('services')" id="adm-tab-services" class="adm-sub-btn px-4 py-2.5 rounded-xl bg-[#121A15] border border-[#1E2E23] text-slate-300 hover:border-neon transition">QUẢN LÝ DỊCH VỤ</button>
+                    <button onclick="switchAdminSubTab('registrations')" id="adm-tab-registrations" class="adm-sub-btn px-4 py-2.5 rounded-xl bg-[#121A15] border border-[#1E2E23] text-slate-300 hover:border-neon transition">HỒ SƠ ĐĂNG KÝ</button>
+                    <button onclick="switchAdminSubTab('orders')" id="adm-tab-orders" class="adm-sub-btn px-4 py-2.5 rounded-xl bg-[#121A15] border border-[#1E2E23] text-slate-300 hover:border-neon transition">QUẢN LÝ ĐƠN HÀNG</button>
+                    <button onclick="switchAdminSubTab('users')" id="adm-tab-users" class="adm-sub-btn px-4 py-2.5 rounded-xl bg-[#121A15] border border-[#1E2E23] text-slate-300 hover:border-neon transition">TÀI KHOẢN & PHÂN QUYỀN</button>
+                    <button onclick="switchAdminSubTab('announcements')" id="adm-tab-announcements" class="adm-sub-btn px-4 py-2.5 rounded-xl bg-[#121A15] border border-[#1E2E23] text-slate-300 hover:border-neon transition">THÔNG BÁO & TIN NHẮN</button>
+                    <button onclick="switchAdminSubTab('logs')" id="adm-tab-logs" class="adm-sub-btn px-4 py-2.5 rounded-xl bg-[#121A15] border border-[#1E2E23] text-slate-300 hover:border-neon transition">NHẬT KÝ HOẠT ĐỘNG</button>
+                </div>
+
+                <!-- Admin Subtab 1: Overview -->
+                <div id="adm-sub-overview" class="adm-sub-content space-y-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="bg-[#121A15] border border-[#1E2E23] p-6 rounded-2xl">
+                            <span class="text-slate-400 text-xs font-orbitron">Tổng Tài Khoản</span>
+                            <h3 id="adm-stat-users" class="font-orbitron font-black text-3xl text-white mt-2">1</h3>
+                        </div>
+                        <div class="bg-[#121A15] border border-[#1E2E23] p-6 rounded-2xl">
+                            <span class="text-slate-400 text-xs font-orbitron">Hồ Sơ Chờ Duyệt</span>
+                            <h3 id="adm-stat-regs" class="font-orbitron font-black text-3xl text-neon mt-2">0</h3>
+                        </div>
+                        <div class="bg-[#121A15] border border-[#1E2E23] p-6 rounded-2xl">
+                            <span class="text-slate-400 text-xs font-orbitron">Đơn Hàng Mới</span>
+                            <h3 id="adm-stat-orders" class="font-orbitron font-black text-3xl text-amber-400 mt-2">0</h3>
+                        </div>
+                        <div class="bg-[#121A15] border border-[#1E2E23] p-6 rounded-2xl">
+                            <span class="text-slate-400 text-xs font-orbitron">Dịch Vụ Hoạt Động</span>
+                            <h3 id="adm-stat-services" class="font-orbitron font-black text-3xl text-white mt-2">6</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Admin Subtab 2: Manage Services -->
+                <div id="adm-sub-services" class="adm-sub-content hidden space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-orbitron font-bold text-lg text-white">Danh Sách Dịch Vụ Clan</h3>
+                        <button onclick="openAddServiceModal()" class="px-4 py-2 rounded-xl bg-neon text-black font-orbitron font-bold text-xs hover:bg-neon-dark transition">
+                            <i class="fa-solid fa-plus mr-2"></i>THÊM DỊCH VỤ MỚI
+                        </button>
+                    </div>
+                    <div id="adm-services-list" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Populated via JS -->
+                    </div>
+                </div>
+
+                <!-- Admin Subtab 3: Registrations Review -->
+                <div id="adm-sub-registrations" class="adm-sub-content hidden space-y-6">
+                    <h3 class="font-orbitron font-bold text-lg text-white">Duyệt Hồ Sơ Thành Viên & Tuyển Thủ</h3>
+                    <div class="bg-[#121A15] border border-[#1E2E23] rounded-2xl p-6 overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-xs font-orbitron">
+                            <thead>
+                                <tr class="border-b border-[#1E2E23] text-slate-400">
+                                    <th class="p-3">Mã HS</th>
+                                    <th class="p-3">Loại</th>
+                                    <th class="p-3">Họ Tên</th>
+                                    <th class="p-3">Tên Game / UID</th>
+                                    <th class="p-3">Trạng Thái</th>
+                                    <th class="p-3 text-right">Thao Tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adm-regs-table-body" class="divide-y divide-[#1E2E23] text-slate-300">
+                                <!-- Populated via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Admin Subtab 4: Orders Management -->
+                <div id="adm-sub-orders" class="adm-sub-content hidden space-y-6">
+                    <h3 class="font-orbitron font-bold text-lg text-white">Quản Lý Đơn Hàng Dịch Vụ</h3>
+                    <div class="bg-[#121A15] border border-[#1E2E23] rounded-2xl p-6 overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-xs font-orbitron">
+                            <thead>
+                                <tr class="border-b border-[#1E2E23] text-slate-400">
+                                    <th class="p-3">Mã Đơn</th>
+                                    <th class="p-3">Dịch Vụ</th>
+                                    <th class="p-3">Khách Hàng</th>
+                                    <th class="p-3">Nhân Vật / UID</th>
+                                    <th class="p-3">Giá</th>
+                                    <th class="p-3">Trạng Thái</th>
+                                    <th class="p-3 text-right">Hành Động</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adm-orders-table-body" class="divide-y divide-[#1E2E23] text-slate-300">
+                                <!-- Populated via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Admin Subtab 5: Users & RBAC -->
+                <div id="adm-sub-users" class="adm-sub-content hidden space-y-6">
+                    <h3 class="font-orbitron font-bold text-lg text-white">Quản Lý Tài Khoản & Phân Quyền (RBAC)</h3>
+                    <div class="bg-[#121A15] border border-[#1E2E23] rounded-2xl p-6 overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-xs font-orbitron">
+                            <thead>
+                                <tr class="border-b border-[#1E2E23] text-slate-400">
+                                    <th class="p-3">Tên Đăng Nhập</th>
+                                    <th class="p-3">Gmail</th>
+                                    <th class="p-3">Vai Trò (Role)</th>
+                                    <th class="p-3">Trạng Thái</th>
+                                    <th class="p-3 text-right">Phân Quyền / Khóa</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adm-users-table-body" class="divide-y divide-[#1E2E23] text-slate-300">
+                                <!-- Populated via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Admin Subtab 6: Announcements & Mass Mail -->
+                <div id="adm-sub-announcements" class="adm-sub-content hidden space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-orbitron font-bold text-lg text-white">Soạn Thư & Thông Báo Toàn Hệ Thống</h3>
+                        <button onclick="openMassMailModal()" class="px-4 py-2 rounded-xl bg-neon text-black font-orbitron font-bold text-xs hover:bg-neon-dark transition">
+                            <i class="fa-solid fa-paper-plane mr-2"></i>GỬI THƯ HÀNG LOẠT
+                        </button>
+                    </div>
+                    <div class="bg-[#121A15] border border-[#1E2E23] rounded-2xl p-6 space-y-4">
+                        <h4 class="font-orbitron font-bold text-sm text-neon">Thêm Thông Báo Trang Chủ</h4>
+                        <form onsubmit="handleCreateAnnouncement(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-xs text-slate-400 mb-1">Tiêu đề thông báo</label>
+                                <input type="text" id="ann-title" required class="w-full bg-black border border-[#1E2E23] rounded-xl px-4 py-2.5 text-sm text-white focus:border-neon outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-slate-400 mb-1">Nội dung chi tiết</label>
+                                <textarea id="ann-content" rows="3" required class="w-full bg-black border border-[#1E2E23] rounded-xl px-4 py-2.5 text-sm text-white focus:border-neon outline-none"></textarea>
+                            </div>
+                            <button type="submit" class="px-6 py-2.5 rounded-xl bg-neon text-black font-orbitron font-bold text-xs hover:bg-neon-dark transition">ĐĂNG THÔNG BÁO</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Admin Subtab 7: Activity Logs -->
+                <div id="adm-sub-logs" class="adm-sub-content hidden space-y-6">
+                    <h3 class="font-orbitron font-bold text-lg text-white">Nhật Ký Hoạt Động Hệ Thống (Audit Logs)</h3>
+                    <div class="bg-[#121A15] border border-[#1E2E23] rounded-2xl p-6 overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-xs font-orbitron">
+                            <thead>
+                                <tr class="border-b border-[#1E2E23] text-slate-400">
+                                    <th class="p-3">Thời gian</th>
+                                    <th class="p-3">Tài khoản</th>
+                                    <th class="p-3">Hành động</th>
+                                    <th class="p-3">Đối tượng</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adm-logs-table-body" class="divide-y divide-[#1E2E23] text-slate-300">
+                                <!-- Populated via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-[#0A0F0D] border-t border-[#1E2E23] py-12 mt-16 font-orbitron text-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
+            <div class="flex items-center justify-center space-x-3">
+                <i class="fa-solid fa-shield-halved text-neon text-xl"></i>
+                <span class="font-black text-white text-base tracking-wider">FREEDOM WINGS II — CLAN DELTA FORCE</span>
+            </div>
+            <p class="text-slate-400 font-sans text-sm">Hệ thống quản lý clan chuyên nghiệp, bảo mật phân quyền RBAC toàn diện.</p>
+            <p class="text-[10px] text-slate-500">&copy; 2026 FREEDOM WINGS II. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- ================= MODALS ================= -->
+
+    <!-- Auth Modal (Login / Register / Admin Login) -->
+    <div id="auth-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+        <div class="bg-[#121A15] border border-neon/40 rounded-2xl w-full max-w-md p-6 sm:p-8 relative space-y-6 shadow-2xl">
+            <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-400 hover:text-neon">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div class="text-center space-y-2">
+                <h3 id="auth-modal-title" class="font-orbitron font-black text-2xl text-white">ĐĂNG NHẬP HỆ THỐNG</h3>
+                <p id="auth-modal-subtitle" class="text-xs text-slate-400">Nhập thông tin tài khoản để truy cập</p>
+            </div>
+
+            <form id="auth-form" onsubmit="handleAuthSubmit(event)" class="space-y-4 font-orbitron text-xs">
+                <div>
+                    <label class="block text-slate-400 mb-1">Tên đăng nhập hoặc Gmail</label>
+                    <input type="text" id="auth-username" required placeholder="Anhung123 hoặc email..." class="w-full bg-black border border-[#1E2E23] rounded-xl px-4 py-3 text-sm text-white focus:border-neon outline-none">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Mật khẩu</label>
+                    <div class="relative">
+                        <input type="password" id="auth-password" required placeholder="••••••••" class="w-full bg-black border border-[#1E2E23] rounded-xl px-4 py-3 text-sm text-white focus:border-neon outline-none pr-10">
+                        <button type="button" onclick="togglePasswordVisibility()" class="absolute right-3 top-3.5 text-slate-400 hover:text-neon">
+                            <i id="eye-icon" class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="auth-register-extra" class="hidden space-y-4">
+                    <div>
+                        <label class="block text-slate-400 mb-1">Địa chỉ Gmail</label>
+                        <input type="email" id="auth-email" placeholder="example@gmail.com" class="w-full bg-black border border-[#1E2E23] rounded-xl px-4 py-3 text-sm text-white focus:border-neon outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-slate-400 mb-1">Xác nhận mật khẩu</label>
+                        <input type="password" id="auth-password-confirm" placeholder="••••••••" class="w-full bg-black border border-[#1E2E23] rounded-xl px-4 py-3 text-sm text-white focus:border-neon outline-none">
+                    </div>
+                </div>
+
+                <div id="auth-error" class="text-red-400 text-xs hidden"></div>
+
+                <button type="submit" id="auth-submit-btn" class="w-full py-3.5 rounded-xl bg-neon text-black font-bold text-sm hover:bg-neon-dark transition shadow-lg shadow-neon/20">
+                    ĐĂNG NHẬP
+                </button>
+            </form>
+
+            <div class="text-center pt-2 border-t border-[#1E2E23] text-xs font-orbitron">
+                <span id="auth-switch-text" class="text-slate-400">Chưa có tài khoản?</span>
+                <button onclick="toggleAuthMode()" id="auth-switch-btn" class="text-neon font-bold ml-1 hover:underline">Đăng ký ngay</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Registration Form Modal (Member / Player) -->
+    <div id="registration-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+        <div class="bg-[#121A15] border border-neon/40 rounded-2xl w-full max-w-lg p-6 sm:p-8 relative space-y-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <button onclick="closeRegistrationModal()" class="absolute top-4 right-4 text-slate-400 hover:text-neon">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div class="text-center space-y-2">
+                <h3 id="reg-modal-title" class="font-orbitron font-black text-2xl text-white">ĐĂNG KÝ THÀNH VIÊN CLAN</h3>
+                <p id="reg-modal-subtitle" class="text-xs text-slate-400">Điền thông tin chính xác để ban quản trị xét duyệt.</p>
+            </div>
+
+            <form id="reg-form" onsubmit="handleRegistrationSubmit(event)" class="space-y-4 font-orbitron text-xs">
+                <input type="hidden" id="reg-type" value="member">
+                <div>
+                    <label class="block text-slate-400 mb-1">Họ và tên</label>
+                    <input type="text" id="reg-fullname" required class="w-full bg-black border border-[#1E2E23] rounded-xl px-4 py-2.5 text-sm text-white focus:border-neon outline-none">
+                </div>
+                <div id="reg-field-gamename">
+                    <label class="block text-slate-400 mb-1">Tên nhân vật trong game</label>
+                    <input type="text" id="reg-ingamename" required class="w-full bg-black border border-[#1E2E23] rounded-xl px-4 py-2.5 text-sm text-white focus:border-neon outline-none">
+                </div>
+                <div id="reg-field-phone" class="hidden">
+                    <label class="block text-slate-400 mb-1">Số điện thoại liên hệ</label>
+                    <input type="text" id="reg-phone" class="w-full bg-black border border-[#1E2E23] rounded-xl px-4 py-2.5 text-sm text-white focus:border-neon outline-none">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">UID game Delta Force</label>
+                    <input type="text" id="reg-uid" required class="w-full bg-black border border-[#1E2E23] rounded-xl px-4 py-2.5 text-sm text-white focus:border-neon outline-none">
+                </div>
+                <div id="reg-field-modes" class="hidden space-y-2">
+                    <label class="block text-slate-400 mb-1">Chế độ đăng ký (Chọn nhiều)</label>
+                    <div class="grid grid-cols-3 gap-2 text-white">
+                        <label class="flex items-center space-x-2 bg-black p-2 rounded-lg border border-[#1E2E23]"><input type="checkbox" value="Chiến trường" class="reg-mode-chk accent-[#00FF66]"> <span>Chiến trường</span></label>
+                        <label class="flex items-center space-x-2 bg-black p-2 rounded-lg border border-[#1E2E23]"><input type="checkbox" value="Chiến dịch" class="reg-mode-chk accent-[#00FF66]"> <span>Chiến dịch</span></label>
+                        <label class="flex items-center space-x-2 bg-black p-2 rounded-lg border border-[#1E2E23]"><input type="checkbox" value="Kích nổ" class="reg-mode-chk accent-[#00FF66]"> <span>Kích nổ</span></label>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Ảnh hồ sơ game / minh chứng (URL hình ảnh)</label>
+                    <input type="text" id="reg-image" required placeholder="https://..." class="w-full bg-black border border-[#1E2E23] rounded-xl px-4 py-2.5 text-sm text-white focus:border-neon outline-none">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Lời giới thiệu bản thân (không bắt buộc)</label>
+                    <textarea id="reg-intro" rows="2" class="w-full bg-black border border-[#1E2E23] rounded-xl px-4 py-2.5 text-sm text-white focus:border-neon outline-none"></textarea>
+                </div>
+                <div class="flex items-center space-x-2 pt-2">
+                    <input type="checkbox" id="reg-agree" required class="accent-[#00FF66] w-4 h-4">
+                    <label for="reg-agree" class="text-slate-300 text-xs">Tôi xác nhận đã đọc nội quy clan và cam kết tuân thủ định dạng tên.</label>
+                </div>
+                <button type="submit" class="w-full py-3.5 rounded-xl bg-neon text-black font-bold text-sm hover:bg-neon-dark transition shadow-lg shadow-neon/20">
+                    GỬI HỒ SƠ ĐĂNG KÝ
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Service Order Modal -->
+    <div id="order-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+        <div class="bg-[#121A15] border border-neon/40 rounded-2xl w-full max-w-md p-6 sm:p-8 relative space-y-6 shadow-2xl">
+            <button onclick="closeOrderModal()" class="absolute top-4 right-4 text-slate-400 hover:text-neon">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div class="text-center space-y-2">
+                <h3 class="font-orbitron font-black text-2xl text-white">ĐẶT DỊCH VỤ CLAN</h3>
+                <p id="order-service-title" class="text-xs text-neon font-bold">Cày két 3x3 — 400.000₫</p>
+            </div>
+
+            <form onsubmit="handleOrderSubmit(event)" class="space-y-4 font-orbitron text-xs">
+                <input type="hidden" id="order-service-id">
+                <div>
+                    <label class="block text-slate-400 mb-1">Tên nhân vật trong game</label>
+                    <input type="text" id="order-ingamename" required class="w-full bg-black border border-[#1E2E23] rounded-xl px-4 py-2.5 text-sm text-white focus:border-neon outline-none">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">UID game Delta Force</label>
+                    <input type="text" id="order-uid" required class="w-full bg-black border border-[#1E2E23] rounded-xl px-4 py-2.5 text-sm text-white focus:border-neon outline-none">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Thông tin liên hệ (SĐT / Discord / Zalo)</label>
+                    <input type="text" id="order-contact" required class="w-full bg-black border border-[#1E2E23] rounded-xl px-4 py-2.5 text-sm text-white focus:border-neon outline-none">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Yêu cầu riêng (nếu có)</label>
+                    <textarea id="order-notes" rows="2" class="w-full bg-black border border-[#1E2E23] rounded-xl px-4 py-2.5 text-sm text-white focus:border-neon outline-none"></textarea>
+                </div>
+                <div class="flex items-center space-x-2 pt-2">
+                    <input type="checkbox" id="order-agree" required class="accent-[#00FF66] w-4 h-4">
+                    <label for="order-agree" class="text-slate-300 text-xs">Xác nhận mức giá và điều kiện sử dụng dịch vụ.</label>
+                </div>
+                <button type="submit" class="w-full py-3.5 rounded-xl bg-neon text-black font-bold text-sm hover:bg-neon-dark transition shadow-lg shadow-neon/20">
+                    XÁC NHẬN ĐẶT DỊCH VỤ
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div id="edit-profile-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+        <div class="bg-[#121A15] border border-neon/40 rounded-2xl w-full max-w-md p-6 sm:p-8 relative space-y-6 shadow-2xl">
+            <button onclick="closeEditProfileModal()" class="absolute top-4 right-4 text-slate-400 hover:text-neon">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div class="text-center space-y-2">
+                <h3 class="font-orbitron font-black text-2xl text-white">CHỈNH SỬA HỒ SƠ</h3>
+                <p class="text-xs text-slate-400">Cập nhật thông tin cá nhân của bạn</p>
+            </div>
+
+            <form onsubmit="handleEditProfileSubmit(event)" class="space-y-4 font-orbitron text-xs">
+                <div>
+                    <label class="block text-slate-400 mb-1">Họ và tên hiển thị</label>
+                    <input type="text" id="edit-fullname" required class="w-full bg-black border border-[#1E2E23] rounded-xl px-4 py-2.5 text-sm text-white focus:border-neon outline-none">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Ảnh đại diện (URL hình ảnh)</label>
+                    <input type="text" id="edit-avatar" required class="w-full bg-black border border-[#1E2E23] rounded-xl px-4 py-2.5 text-sm text-white focus:border-neon outline-none">
+                </div>
+                <button type="submit" class="w-full py-3.5 rounded-xl bg-neon text-black font-bold text-sm hover:bg-neon-dark transition shadow-lg shadow-neon/20">
+                    LƯU THAY ĐỔI
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add / Edit Service Modal (Admin) -->
+    <div id="service-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+        <div class="bg-[#121A15] border border-neon/40 rounded-2xl w-full max-w-md p-6 sm:p-8 relative space-y-6 shadow-2xl">
+            <button onclick="closeServiceModal()" class="absolute top-4 right-4 text-slate-400 hover:text-neon">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div class="text-center space-y-2">
+                <h3 id="service-modal-title" class="font-orbitron font-black text-2xl text-white">THÊM DỊCH VỤ MỚI</h3>
+            </div>
+
+            <form onsubmit="handleServiceSubmit(event)" class="space-y-4 font-orbitron text-xs">
+                <input type="hidden" id="srv-edit-id">
+                <div>
+                    <label class="block text-slate-400 mb-1">Tên dịch vụ</label>
+                    <input type="text" id="srv-name" required class="w-full bg-black border border-[#1E2E23] rounded-xl px-4 py-2.5 text-sm text-white focus:border-neon outline-none">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Danh mục</label>
+                    <select id="srv-category" class="w-full bg-black border border-[#1E2E23] rounded-xl px-4 py-2.5 text-sm text-white focus:border-neon outline-none">
+                        <option value="cay-thue">Dịch vụ cày thuê</option>
+                        <option value="keo-lao-ban">Dịch vụ kéo lão bản</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Giá tiền (VNĐ)</label>
+                    <input type="number" id="srv-price" required class="w-full bg-black border border-[#1E2E23] rounded-xl px-4 py-2.5 text-sm text-white focus:border-neon outline-none">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Ảnh đại diện (URL hình ảnh)</label>
+                    <input type="text" id="srv-image" required class="w-full bg-black border border-[#1E2E23] rounded-xl px-4 py-2.5 text-sm text-white focus:border-neon outline-none">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Mô tả ngắn</label>
+                    <textarea id="srv-desc" rows="2" required class="w-full bg-black border border-[#1E2E23] rounded-xl px-4 py-2.5 text-sm text-white focus:border-neon outline-none"></textarea>
+                </div>
+                <button type="submit" class="w-full py-3.5 rounded-xl bg-neon text-black font-bold text-sm hover:bg-neon-dark transition shadow-lg shadow-neon/20">
+                    LƯU DỊCH VỤ
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- New Message / Mail Modal -->
+    <div id="new-msg-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+        <div class="bg-[#121A15] border border-neon/40 rounded-2xl w-full max-w-md p-6 sm:p-8 relative space-y-6 shadow-2xl">
+            <button onclick="closeNewMessageModal()" class="absolute top-4 right-4 text-slate-400 hover:text-neon">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div class="text-center space-y-2">
+                <h3 class="font-orbitron font-black text-2xl text-white">GỬI TIN NHẮN / THƯ</h3>
+                <p class="text-xs text-slate-400">Gửi phản hồi hoặc liên hệ ban quản trị</p>
+            </div>
+
+            <form onsubmit="handleSendMessage(event)" class="space-y-4 font-orbitron text-xs">
+                <div>
+                    <label class="block text-slate-400 mb-1">Tiêu đề thư</label>
+                    <input type="text" id="msg-title" required class="w-full bg-black border border-[#1E2E23] rounded-xl px-4 py-2.5 text-sm text-white focus:border-neon outline-none">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Nội dung</label>
+                    <textarea id="msg-content" rows="4" required class="w-full bg-black border border-[#1E2E23] rounded-xl px-4 py-2.5 text-sm text-white focus:border-neon outline-none"></textarea>
+                </div>
+                <button type="submit" class="w-full py-3.5 rounded-xl bg-neon text-black font-bold text-sm hover:bg-neon-dark transition shadow-lg shadow-neon/20">
+                    GỬI ĐI
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Mass Mail Modal (Admin) -->
+    <div id="mass-mail-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+        <div class="bg-[#121A15] border border-neon/40 rounded-2xl w-full max-w-md p-6 sm:p-8 relative space-y-6 shadow-2xl">
+            <button onclick="closeMassMailModal()" class="absolute top-4 right-4 text-slate-400 hover:text-neon">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <div class="text-center space-y-2">
+                <h3 class="font-orbitron font-black text-2xl text-white">GỬI THƯ HÀNG LOẠT</h3>
+            </div>
+
+            <form onsubmit="handleSendMassMail(event)" class="space-y-4 font-orbitron text-xs">
+                <div>
+                    <label class="block text-slate-400 mb-1">Tiêu đề thông báo</label>
+                    <input type="text" id="mass-title" required class="w-full bg-black border border-[#1E2E23] rounded-xl px-4 py-2.5 text-sm text-white focus:border-neon outline-none">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Nội dung thư</label>
+                    <textarea id="mass-content" rows="4" required class="w-full bg-black border border-[#1E2E23] rounded-xl px-4 py-2.5 text-sm text-white focus:border-neon outline-none"></textarea>
+                </div>
+                <button type="submit" class="w-full py-3.5 rounded-xl bg-neon text-black font-bold text-sm hover:bg-neon-dark transition shadow-lg shadow-neon/20">
+                    GỬI ĐẾN TẤT CẢ THÀNH VIÊN
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================= JAVASCRIPT APPLICATION LOGIC ================= -->
+    <script>
+        // Initial Mock Database & LocalStorage State
+        const INITIAL_STATE = {
+            currentUser: {
+                username: 'Anhung123',
+                email: 'phamanhung2009@gmail.com',
+                fullname: 'An Hung',
+                role: 'OWNER',
+                status: 'Đang hoạt động',
+                code: 'FW-8888',
+                joinDate: '20/08/2024',
+                avatar: 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=200'
+            },
+            users: [
+                {
+                    username: 'Anhung123',
+                    email: 'phamanhung2009@gmail.com',
+                    fullname: 'An Hung',
+                    role: 'OWNER',
+                    status: 'Đang hoạt động',
+                    code: 'FW-8888',
+                    joinDate: '20/08/2024',
+                    password: 'anhung24082009@',
+                    avatar: 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=200'
+                }
+            ],
+            services: [
+                { id: 'srv-1', name: 'Cày két 3x3', category: 'cay-thue', price: 400000, image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?w=400', desc: 'Cày két 3x3 an toàn, bảo mật tuyệt đối bởi tuyển thủ chuyên nghiệp.', status: 'Đang mở' },
+                { id: 'srv-2', name: 'Cày két 3x3 + Skin', category: 'cay-thue', price: 800000, image: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=400', desc: 'Gói cày két kèm mở khóa skin độc quyền Delta Force.', status: 'Đang mở' },
+                { id: 'srv-3', name: 'Cày full phòng ban', category: 'cay-thue', price: 3500000, image: 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=400', desc: 'Dịch vụ max cấp full phòng ban nhanh chóng.', status: 'Đang mở' },
+                { id: 'srv-4', name: 'Kéo lão bản 2 giờ', category: 'keo-lao-ban', price: 150000, image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400', desc: 'Được kéo booss / lão bản an toàn trong 2 giờ.', status: 'Đang mở' },
+                { id: 'srv-5', name: 'Kéo lão bản 5 giờ', category: 'keo-lao-ban', price: 400000, image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400', desc: 'Gói kéo lão bản dài hạn 5 giờ cày cuốc.', status: 'Đang mở' },
+                { id: 'srv-6', name: 'Kéo giá rẻ 1 triệu xu', category: 'keo-lao-ban', price: 15000, image: 'https://images.unsplash.com/photo-1563089145-599997674d42?w=400', desc: 'Hỗ trợ kiếm 1 triệu xu game nhanh gọn.', status: 'Đang mở' }
+            ],
+            announcements: [
+                { id: 'ann-1', title: 'Chào mừng gia nhập FREEDOM WINGS II', content: 'Chào mừng bạn đến với hệ thống quản lý clan Delta Force chính thức. Hãy cập nhật thông tin và tuân thủ định dạng tên FW・Tên.', date: '16/10/2026', author: 'Anhung123' },
+                { id: 'ann-2', title: 'Lịch tuyển thi đấu tuần này', content: 'Ban tuyển chọn mở đơn đăng ký đội hình Chiến trường và Kích nổ. Anh em nhanh tay ứng tuyển.', date: '15/10/2026', author: 'Anhung123' }
+            ],
+            registrations: [],
+            orders: [],
+            mailbox: [
+                { id: 'mail-1', title: 'Thư chào mừng thành viên mới', sender: 'Hệ thống FW II', date: '16/10/2026', content: 'Chào mừng bạn đến với FREEDOM WINGS II. Chúc bạn có những trải nghiệm tuyệt vời cùng anh em clan!', read: false, type: 'system' }
+            ],
+            logs: [
+                { time: '16/10/2026 15:30', user: 'Anhung123', action: 'Khởi tạo hệ thống Owner', target: 'Hệ thống' }
+            ]
+        };
+
+        // Load or Initialize DB from localStorage
+        let db = JSON.parse(localStorage.getItem('fw_ii_db')) || INITIAL_STATE;
+        function saveDB() {
+            localStorage.setItem('fw_ii_db', JSON.stringify(db));
+        }
+
+        // Initialize App on Load
+        window.addEventListener('DOMContentLoaded', () => {
+            checkAuthUI();
+            renderHomeContent();
+            renderServices();
+            renderProfile();
+            renderMailbox();
+            renderAdminDashboard();
+            updateBadges();
+        });
+
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-neon', 'bg-neon/10', 'border', 'border-neon/50');
+                btn.classList.add('text-slate-300');
+            });
+            const activeNav = document.getElementById(`nav-${tabId}`);
+            if (activeNav) {
+                activeNav.classList.remove('text-slate-300');
+                activeNav.classList.add('text-neon', 'bg-neon/10', 'border', 'border-neon/50');
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Authentication & User UI Check
+        function checkAuthUI() {
+            const loggedOut = document.getElementById('logged-out-controls');
+            const loggedIn = document.getElementById('logged-in-controls');
+            const adminBtn = document.getElementById('nav-admin');
+            const mobileAdminBtn = document.getElementById('mobile-admin-btn');
+
+            if (db.currentUser) {
+                loggedOut.classList.add('hidden');
+                loggedIn.classList.remove('hidden');
+                document.getElementById('user-name-display').innerText = db.currentUser.username;
+                document.getElementById('user-role-display').innerText = db.currentUser.role;
+                document.getElementById('dropdown-username').innerText = db.currentUser.username;
+                document.getElementById('user-avatar-display').src = db.currentUser.avatar;
+
+                if (db.currentUser.role === 'OWNER' || db.currentUser.role === 'ADMIN') {
+                    adminBtn.classList.remove('hidden');
+                    mobileAdminBtn.classList.remove('hidden');
+                } else {
+                    adminBtn.classList.add('hidden');
+                    mobileAdminBtn.classList.add('hidden');
+                }
+            } else {
+                loggedOut.classList.remove('hidden');
+                loggedIn.classList.add('hidden');
+                adminBtn.classList.add('hidden');
+                mobileAdminBtn.classList.add('hidden');
+            }
+        }
+
+        function toggleUserDropdown() {
+            const dropdown = document.getElementById('user-dropdown');
+            dropdown.classList.toggle('hidden');
+        }
+
+        function logoutUser() {
+            db.currentUser = null;
+            saveDB();
+            checkAuthUI();
+            switchTab('home');
+            alert('Đã đăng xuất thành công.');
+        }
+
+        // Auth Modal Controls
+        let isRegisterMode = false;
+        function openAuthModal(mode) {
+            isRegisterMode = (mode === 'register');
+            document.getElementById('auth-modal').classList.remove('hidden');
+            const title = document.getElementById('auth-modal-title');
+            const sub = document.getElementById('auth-modal-subtitle');
+            const btn = document.getElementById('auth-submit-btn');
+            const extra = document.getElementById('auth-register-extra');
+            const switchTxt = document.getElementById('auth-switch-text');
+            const switchBtn = document.getElementById('auth-switch-btn');
+
+            if (isRegisterMode) {
+                title.innerText = 'ĐĂNG KÝ TÀI KHOẢN';
+                sub.innerText = 'Tạo tài khoản mới để tham gia Clan';
+                btn.innerText = 'ĐĂNG KÝ';
+                extra.classList.remove('hidden');
+                switchTxt.innerText = 'Đã có tài khoản?';
+                switchBtn.innerText = 'Đăng nhập ngay';
+            } else {
+                title.innerText = 'ĐĂNG NHẬP HỆ THỐNG';
+                sub.innerText = 'Nhập thông tin tài khoản để truy cập';
+                btn.innerText = 'ĐĂNG NHẬP';
+                extra.classList.add('hidden');
+                switchTxt.innerText = 'Chưa có tài khoản?';
+                switchBtn.innerText = 'Đăng ký ngay';
+            }
+        }
+
+        function closeAuthModal() {
+            document.getElementById('auth-modal').classList.add('hidden');
+            document.getElementById('auth-error').classList.add('hidden');
+        }
+
+        function toggleAuthMode() {
+            openAuthModal(isRegisterMode ? 'login' : 'register');
+        }
+
+        function togglePasswordVisibility() {
+            const pwdInput = document.getElementById('auth-password');
+            const eyeIcon = document.getElementById('eye-icon');
+            if (pwdInput.type === 'password') {
+                pwdInput.type = 'text';
+                eyeIcon.classList.remove('fa-eye');
+                eyeIcon.classList.add('fa-eye-slash');
+            } else {
+                pwdInput.type = 'password';
+                eyeIcon.classList.remove('fa-eye-slash');
+                eyeIcon.classList.add('fa-eye');
+            }
+        }
+
+        function handleAuthSubmit(event) {
+            event.preventDefault();
+            const username = document.getElementById('auth-username').value.trim();
+            const password = document.getElementById('auth-password').value;
+            const errBox = document.getElementById('auth-error');
+
+            if (isRegisterMode) {
+                const email = document.getElementById('auth-email').value.trim();
+                const confirmPwd = document.getElementById('auth-password-confirm').value;
+
+                if (password !== confirmPwd) {
+                    errBox.innerText = 'Mật khẩu xác nhận không khớp.';
+                    errBox.classList.remove('hidden');
+                    return;
+                }
+
+                const existing = db.users.find(u => u.username === username || u.email === email);
+                if (existing) {
+                    errBox.innerText = 'Tên đăng nhập hoặc Gmail đã tồn tại.';
+                    errBox.classList.remove('hidden');
+                    return;
+                }
+
+                const newUser = {
+                    username,
+                    email,
+                    fullname: username,
+                    role: 'MEMBER',
+                    status: 'Đang hoạt động',
+                    code: 'FW-' + Math.floor(1000 + Math.random() * 9000),
+                    joinDate: new Date().toLocaleDateString('vi-VN'),
+                    password,
+                    avatar: 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=200'
+                };
+                db.users.push(newUser);
+                db.currentUser = newUser;
+                db.logs.push({ time: new Date().toLocaleString('vi-VN'), user: username, action: 'Đăng ký tài khoản mới', target: username });
+                saveDB();
+                closeAuthModal();
+                checkAuthUI();
+                renderProfile();
+                alert('Đăng ký tài khoản thành công!');
+            } else {
+                // Login check
+                const user = db.users.find(u => (u.username === username || u.email === username) && u.password === password);
+                if (user) {
+                    db.currentUser = user;
+                    db.logs.push({ time: new Date().toLocaleString('vi-VN'), user: user.username, action: 'Đăng nhập hệ thống', target: user.username });
+                    saveDB();
+                    closeAuthModal();
+                    checkAuthUI();
+                    renderProfile();
+                    renderMailbox();
+                    renderAdminDashboard();
+                    alert(`Chào mừng trở lại, ${user.fullname} (${user.role})!`);
+                } else {
+                    errBox.innerText = 'Tên đăng nhập hoặc mật khẩu không đúng.';
+                    errBox.classList.remove('hidden');
+                }
+            }
+        }
+
+        // Render Home Content
+        function renderHomeContent() {
+            const annContainer = document.getElementById('home-announcements-container');
+            annContainer.innerHTML = db.announcements.map(ann => `
+                <div class="bg-[#121A15] border border-[#1E2E23] p-6 rounded-2xl hover:border-neon transition space-y-2">
+                    <div class="flex justify-between items-center text-xs text-slate-400">
+                        <span><i class="fa-solid fa-calendar text-neon mr-2"></i>${ann.date}</span>
+                        <span class="text-neon font-bold uppercase font-orbitron">Bởi ${ann.author}</span>
+                    </div>
+                    <h3 class="font-orbitron font-bold text-lg text-white">${ann.title}</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">${ann.content}</p>
+                </div>
+            `).join('');
+
+            const featContainer = document.getElementById('home-featured-services');
+            const featured = db.services.slice(0, 3);
+            featContainer.innerHTML = featured.map(srv => `
+                <div class="bg-[#121A15] border border-[#1E2E23] rounded-2xl overflow-hidden hover:border-neon transition flex flex-col justify-between group">
+                    <div class="h-48 overflow-hidden relative">
+                        <img src="${srv.image}" alt="${srv.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        <span class="absolute top-4 right-4 bg-neon text-black font-orbitron font-black text-xs px-3 py-1 rounded-lg">${srv.status}</span>
+                    </div>
+                    <div class="p-6 space-y-3 flex-grow">
+                        <h4 class="font-orbitron font-bold text-lg text-white">${srv.name}</h4>
+                        <p class="text-slate-400 text-xs">${srv.desc}</p>
+                        <div class="text-neon font-orbitron font-black text-lg">${srv.price.toLocaleString('vi-VN')}₫</div>
+                    </div>
+                    <div class="p-6 pt-0">
+                        <button onclick="openOrderModal('${srv.id}')" class="w-full py-3 rounded-xl bg-neon text-black font-orbitron font-bold text-xs hover:bg-neon-dark shadow-lg shadow-neon/20 transition">
+                            ĐẶT DỊCH VỤ NGAY
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Services Logic
+        let currentCategoryFilter = 'all';
+        function filterServices(category) {
+            currentCategoryFilter = category;
+            document.querySelectorAll('[id^="filter-btn-"]').forEach(btn => {
+                btn.classList.remove('bg-neon', 'text-black', 'font-bold');
+                btn.classList.add('bg-[#121A15]', 'border', 'border-[#1E2E23]', 'text-slate-300');
+            });
+            const activeBtn = document.getElementById(`filter-btn-${category}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('bg-[#121A15]', 'border', 'border-[#1E2E23]', 'text-slate-300');
+                activeBtn.classList.add('bg-neon', 'text-black', 'font-bold');
+            }
+            renderServices();
+        }
+
+        function renderServices() {
+            const grid = document.getElementById('services-grid');
+            const filtered = currentCategoryFilter === 'all' 
+                ? db.services 
+                : db.services.filter(s => s.category === currentCategoryFilter);
+
+            grid.innerHTML = filtered.map(srv => `
+                <div class="bg-[#121A15] border border-[#1E2E23] rounded-2xl overflow-hidden hover:border-neon transition flex flex-col justify-between group">
+                    <div class="h-48 overflow-hidden relative">
+                        <img src="${srv.image}" alt="${srv.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                        <span class="absolute top-4 right-4 bg-neon text-black font-orbitron font-black text-xs px-3 py-1 rounded-lg">${srv.status}</span>
+                    </div>
+                    <div class="p-6 space-y-3 flex-grow">
+                        <h4 class="font-orbitron font-bold text-lg text-white">${srv.name}</h4>
+                        <p class="text-slate-400 text-xs">${srv.desc}</p>
+                        <div class="text-neon font-orbitron font-black text-lg">${srv.price.toLocaleString('vi-VN')}₫</div>
+                    </div>
+                    <div class="p-6 pt-0">
+                        <button onclick="openOrderModal('${srv.id}')" class="w-full py-3 rounded-xl bg-neon text-black font-orbitron font-bold text-xs hover:bg-neon-dark shadow-lg shadow-neon/20 transition">
+                            ĐẶT DỊCH VỤ NGAY
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            renderMyOrders();
+        }
+
+        // Registration Modal & Submissions
+        function openRegistrationModal(type) {
+            if (!db.currentUser) {
+                alert('Vui lòng đăng nhập trước khi gửi đăng ký.');
+                openAuthModal('login');
+                return;
+            }
+            document.getElementById('registration-modal').classList.remove('hidden');
+            document.getElementById('reg-type').value = type;
+            const title = document.getElementById('reg-modal-title');
+            const modes = document.getElementById('reg-field-modes');
+            const phone = document.getElementById('reg-field-phone');
+
+            if (type === 'player') {
+                title.innerText = 'ĐĂNG KÝ TUYỂN THỦ THI ĐẤU';
+                modes.classList.remove('hidden');
+                phone.classList.remove('hidden');
+            } else {
+                title.innerText = 'ĐĂNG KÝ THÀNH VIÊN CLAN';
+                modes.classList.add('hidden');
+                phone.classList.add('hidden');
+            }
+        }
+
+        function closeRegistrationModal() {
+            document.getElementById('registration-modal').classList.add('hidden');
+        }
+
+        function handleRegistrationSubmit(event) {
+            event.preventDefault();
+            const type = document.getElementById('reg-type').value;
+            const fullname = document.getElementById('reg-fullname').value;
+            const ingamename = document.getElementById('reg-ingamename').value;
+            const uid = document.getElementById('reg-uid').value;
+            const image = document.getElementById('reg-image').value;
+            const intro = document.getElementById('reg-intro').value;
+            const phone = document.getElementById('reg-phone').value;
+
+            let selectedModes = [];
+            if (type === 'player') {
+                document.querySelectorAll('.reg-mode-chk:checked').forEach(chk => selectedModes.push(chk.value));
+            }
+
+            const newReg = {
+                id: 'REG-' + Math.floor(100000 + Math.random() * 900000),
+                type: type === 'player' ? 'Tuyển thủ' : 'Thành viên',
+                username: db.currentUser.username,
+                fullname,
+                ingamename,
+                uid,
+                image,
+                intro,
+                phone,
+                modes: selectedModes,
+                status: 'Chờ duyệt',
+                date: new Date().toLocaleString('vi-VN')
+            };
+
+            db.registrations.push(newReg);
+            db.mailbox.unshift({
+                id: 'mail-' + Date.now(),
+                title: `Hồ sơ đăng ký (${newReg.type}) đã được gửi`,
+                sender: 'Hệ thống FW II',
+                date: new Date().toLocaleDateString('vi-VN'),
+                content: `Hồ sơ đăng ký của bạn mã ${newReg.id} đã được gửi đến ban quản trị và đang chờ xét duyệt.`,
+                read: false,
+                type: 'system'
+            });
+            db.logs.push({ time: new Date().toLocaleString('vi-VN'), user: db.currentUser.username, action: `Gửi đăng ký ${newReg.type}`, target: newReg.id });
+            saveDB();
+            closeRegistrationModal();
+            renderProfile();
+            alert('Gửi hồ sơ đăng ký thành công! Bạn có thể theo dõi tiến trình trong hồ sơ cá nhân.');
+        }
+
+        // Service Order Modal & Submission
+        let selectedServiceForOrder = null;
+        function openOrderModal(srvId) {
+            if (!db.currentUser) {
+                alert('Vui lòng đăng nhập trước khi đặt dịch vụ.');
+                openAuthModal('login');
+                return;
+            }
+            const srv = db.services.find(s => s.id === srvId);
+            if (!srv) return;
+            selectedServiceForOrder = srv;
+            document.getElementById('order-modal').classList.remove('hidden');
+            document.getElementById('order-service-id').value = srv.id;
+            document.getElementById('order-service-title').innerText = `${srv.name} — ${srv.price.toLocaleString('vi-VN')}₫`;
+        }
+
+        function closeOrderModal() {
+            document.getElementById('order-modal').classList.add('hidden');
+        }
+
+        function handleOrderSubmit(event) {
+            event.preventDefault();
+            const ingamename = document.getElementById('order-ingamename').value;
+            const uid = document.getElementById('order-uid').value;
+            const contact = document.getElementById('order-contact').value;
+            const notes = document.getElementById('order-notes').value;
+
+            const newOrder = {
+                id: 'ORD-' + Math.floor(100000 + Math.random() * 900000),
+                serviceId: selectedServiceForOrder.id,
+                serviceName: selectedServiceForOrder.name,
+                price: selectedServiceForOrder.price,
+                username: db.currentUser.username,
+                ingamename,
+                uid,
+                contact,
+                notes,
+                status: 'Chờ xác nhận',
+                date: new Date().toLocaleString('vi-VN')
+            };
+
+            db.orders.push(newOrder);
+            db.mailbox.unshift({
+                id: 'mail-' + Date.now(),
+                title: `Xác nhận đặt đơn hàng ${newOrder.id}`,
+                sender: 'Bộ phận Hỗ trợ đơn',
+                date: new Date().toLocaleDateString('vi-VN'),
+                content: `Đơn hàng ${newOrder.name} với giá ${newOrder.price.toLocaleString('vi-VN')}₫ đã được ghi nhận. Trạng thái: Chờ xác nhận.`,
+                read: false,
+                type: 'orders'
+            });
+            db.logs.push({ time: new Date().toLocaleString('vi-VN'), user: db.currentUser.username, action: 'Đặt dịch vụ mới', target: newOrder.id });
+            saveDB();
+            closeOrderModal();
+            renderServices();
+            renderProfile();
+            alert('Đặt dịch vụ thành công! Đơn hàng đã được gửi đến bộ phận xử lý.');
+        }
+
+        // Profile Rendering
+        function renderProfile() {
+            const unauth = document.getElementById('profile-unauth-notice');
+            const authContent = document.getElementById('profile-auth-content');
+
+            if (!db.currentUser) {
+                unauth.classList.remove('hidden');
+                authContent.classList.add('hidden');
+                return;
+            }
+
+            unauth.classList.add('hidden');
+            authContent.classList.remove('hidden');
+
+            document.getElementById('profile-fullname').innerText = db.currentUser.fullname;
+            document.getElementById('profile-username').innerText = db.currentUser.username;
+            document.getElementById('profile-email').innerText = db.currentUser.email;
+            document.getElementById('profile-role-badge').innerText = db.currentUser.role;
+            document.getElementById('profile-code').innerText = db.currentUser.code;
+            document.getElementById('profile-joindate').innerText = db.currentUser.joinDate;
+            document.getElementById('profile-status').innerText = db.currentUser.status;
+            document.getElementById('profile-avatar').src = db.currentUser.avatar;
+
+            // Render My Registrations
+            const myRegsContainer = document.getElementById('profile-my-regs') || document.getElementById('my-registrations-container');
+            const userRegs = db.registrations.filter(r => r.username === db.currentUser.username);
+            
+            const renderRegHTML = userRegs.length === 0 ? '<div class="text-xs text-slate-400">Chưa có hồ sơ đăng ký nào.</div>' : userRegs.map(r => `
+                <div class="bg-black/40 border border-[#1E2E23] p-4 rounded-xl flex justify-between items-center text-xs">
+                    <div>
+                        <span class="text-neon font-bold">${r.type}</span> — <span class="text-white">${r.id}</span>
+                        <div class="text-slate-400 mt-1">Trạng thái: <span class="text-amber-400 font-bold">${r.status}</span></div>
+                    </div>
+                    <span class="text-slate-500">${r.date}</span>
+                </div>
+            `).join('');
+
+            if(document.getElementById('profile-my-regs')) document.getElementById('profile-my-regs').innerHTML = renderRegHTML;
+            if(document.getElementById('my-registrations-container')) document.getElementById('my-registrations-container').innerHTML = renderRegHTML;
+
+            // Render My Orders
+            const myOrdersContainer = document.getElementById('profile-my-orders') || document.getElementById('my-orders-container');
+            const userOrders = db.orders.filter(o => o.username === db.currentUser.username);
+
+            const renderOrderHTML = userOrders.length === 0 ? '<div class="text-xs text-slate-400">Chưa có đơn hàng dịch vụ nào.</div>' : userOrders.map(o => `
+                <div class="bg-black/40 border border-[#1E2E23] p-4 rounded-xl flex justify-between items-center text-xs">
+                    <div>
+                        <span class="text-neon font-bold">${o.serviceName}</span> — <span class="text-white">${o.price.toLocaleString('vi-VN')}₫</span>
+                        <div class="text-slate-400 mt-1">Mã đơn: ${o.id} | Trạng thái: <span class="text-amber-400 font-bold">${o.status}</span></div>
+                    </div>
+                    <span class="text-slate-500">${o.date}</span>
+                </div>
+            `).join('');
+
+            if(document.getElementById('profile-my-orders')) document.getElementById('profile-my-orders').innerHTML = renderOrderHTML;
+            if(document.getElementById('my-orders-container')) document.getElementById('my-orders-container').innerHTML = renderOrderHTML;
+        }
+
+        // Edit Profile
+        function openEditProfileModal() {
+            if (!db.currentUser) return;
+            document.getElementById('edit-profile-modal').classList.remove('hidden');
+            document.getElementById('edit-fullname').value = db.currentUser.fullname;
+            document.getElementById('edit-avatar').value = db.currentUser.avatar;
+        }
+
+        function closeEditProfileModal() {
+            document.getElementById('edit-profile-modal').classList.add('hidden');
+        }
+
+        function handleEditProfileSubmit(event) {
+            event.preventDefault();
+            const fullname = document.getElementById('edit-fullname').value;
+            const avatar = document.getElementById('edit-avatar').value;
+
+            db.currentUser.fullname = fullname;
+            db.currentUser.avatar = avatar;
+
+            // Update in users array
+            const idx = db.users.findIndex(u => u.username === db.currentUser.username);
+            if (idx !== -1) {
+                db.users[idx].fullname = fullname;
+                db.users[idx].avatar = avatar;
+            }
+
+            db.logs.push({ time: new Date().toLocaleString('vi-VN'), user: db.currentUser.username, action: 'Cập nhật hồ sơ cá nhân', target: db.currentUser.username });
+            saveDB();
+            closeEditProfileModal();
+            checkAuthUI();
+            renderProfile();
+            alert('Cập nhật hồ sơ thành công!');
+        }
+
+        // Mailbox & Messages
+        let currentMailFilter = 'all';
+        function filterMailbox(filter) {
+            currentMailFilter = filter;
+            document.querySelectorAll('[id^="mail-tab-"]').forEach(btn => {
+                btn.classList.remove('bg-neon/10', 'border', 'border-neon/50', 'text-neon', 'font-bold');
+                btn.classList.add('hover:bg-neon/5', 'text-slate-300');
+            });
+            const active = document.getElementById(`mail-tab-${filter}`);
+            if (active) {
+                active.classList.remove('hover:bg-neon/5', 'text-slate-300');
+                active.classList.add('bg-neon/10', 'border', 'border-neon/50', 'text-neon', 'font-bold');
+            }
+            renderMailbox();
+        }
+
+        function renderMailbox() {
+            const unauth = document.getElementById('mailbox-unauth');
+            const authContent = document.getElementById('mailbox-auth-content');
+            const list = document.getElementById('mailbox-list');
+
+            if (!db.currentUser) {
+                unauth.classList.remove('hidden');
+                authContent.classList.add('hidden');
+                return;
+            }
+
+            unauth.classList.add('hidden');
+            authContent.classList.remove('hidden');
+
+            let filtered = db.mailbox;
+            if (currentMailFilter === 'unread') filtered = db.mailbox.filter(m => !m.read);
+            if (currentMailFilter === 'system') filtered = db.mailbox.filter(m => m.type === 'system');
+            if (currentMailFilter === 'admin') filtered = db.mailbox.filter(m => m.type === 'admin');
+            if (currentMailFilter === 'orders') filtered = db.mailbox.filter(m => m.type === 'orders');
+
+            list.innerHTML = filtered.length === 0 ? '<div class="text-xs text-slate-400 text-center py-8">Không có thư nào trong mục này.</div>' : filtered.map(m => `
+                <div onclick="markMailRead('${m.id}')" class="bg-black/40 border ${m.read ? 'border-[#1E2E23]' : 'border-neon/50'} p-4 rounded-xl flex justify-between items-center cursor-pointer hover:border-neon transition">
+                    <div class="space-y-1">
+                        <div class="flex items-center space-x-2">
+                            ${!m.read ? '<span class="w-2 h-2 rounded-full bg-neon"></span>' : ''}
+                            <h4 class="font-bold text-sm text-white">${m.title}</h4>
+                        </div>
+                        <p class="text-xs text-slate-400">${m.content}</p>
+                    </div>
+                    <div class="text-right text-[10px] text-slate-500">
+                        <span class="block text-neon font-bold">${m.sender}</span>
+                        <span>${m.date}</span>
+                    </div>
+                </div>
+            `).join('');
+
+            updateBadges();
+        }
+
+        function markMailRead(id) {
+            const mail = db.mailbox.find(m => m.id === id);
+            if (mail) {
+                mail.read = true;
+                saveDB();
+                renderMailbox();
+            }
+        }
+
+        function openNewMessageModal() {
+            if (!db.currentUser) return;
+            document.getElementById('new-msg-modal').classList.remove('hidden');
+        }
+
+        function closeNewMessageModal() {
+            document.getElementById('new-msg-modal').classList.add('hidden');
+        }
+
+        function handleSendMessage(event) {
+            event.preventDefault();
+            const title = document.getElementById('msg-title').value;
+            const content = document.getElementById('msg-content').value;
+
+            db.mailbox.unshift({
+                id: 'mail-' + Date.now(),
+                title,
+                sender: db.currentUser.username,
+                date: new Date().toLocaleString('vi-VN'),
+                content,
+                read: false,
+                type: 'admin'
+            });
+            saveDB();
+            closeNewMessageModal();
+            renderMailbox();
+            alert('Gửi tin nhắn thành công!');
+        }
+
+        function updateBadges() {
+            const unreadCount = db.mailbox.filter(m => !m.read).length;
+            const badgeUnread = document.getElementById('unread-mail-badge');
+            const notifCount = document.getElementById('notification-count');
+            const notifDot = document.getElementById('notification-dot');
+
+            if (unreadCount > 0) {
+                badgeUnread.innerText = unreadCount;
+                badgeUnread.classList.remove('hidden');
+                notifCount.innerText = unreadCount;
+                notifCount.classList.remove('hidden');
+                notifDot.classList.remove('hidden');
+            } else {
+                badgeUnread.classList.add('hidden');
+                notifCount.classList.add('hidden');
+                notifDot.classList.add('hidden');
+            }
+
+            const badgeAll = document.getElementById('badge-mail-all');
+            const badgeUnreadMail = document.getElementById('badge-mail-unread');
+            if (badgeAll) badgeAll.innerText = db.mailbox.length;
+            if (badgeUnreadMail) badgeUnreadMail.innerText = unreadCount;
+        }
+
+        function toggleNotificationDropdown() {
+            const drop = document.getElementById('notification-dropdown');
+            drop.classList.toggle('hidden');
+            const list = document.getElementById('notification-list');
+            if (db.mailbox.length === 0) {
+                list.innerHTML = '<div class="text-xs text-slate-400 text-center py-4">Không có thông báo</div>';
+            } else {
+                list.innerHTML = db.mailbox.slice(0, 5).map(m => `
+                    <div class="p-2.5 bg-black/40 rounded-lg text-xs space-y-1 border border-[#1E2E23]">
+                        <div class="font-bold text-white">${m.title}</div>
+                        <div class="text-slate-400 text-[10px]">${m.content}</div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function markAllNotificationsRead() {
+            db.mailbox.forEach(m => m.read = true);
+            saveDB();
+            renderMailbox();
+            toggleNotificationDropdown();
+        }
+
+        // ================= ADMIN DASHBOARD LOGIC =================
+        function switchAdminSubTab(subTabId) {
+            document.querySelectorAll('.adm-sub-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`adm-sub-${subTabId}`).classList.remove('hidden');
+
+            document.querySelectorAll('.adm-sub-btn').forEach(btn => {
+                btn.classList.remove('bg-neon', 'text-black', 'font-bold');
+                btn.classList.add('bg-[#121A15]', 'border', 'border-[#1E2E23]', 'text-slate-300');
+            });
+            const active = document.getElementById(`adm-tab-${subTabId}`);
+            if (active) {
+                active.classList.remove('bg-[#121A15]', 'border', 'border-[#1E2E23]', 'text-slate-300');
+                active.classList.add('bg-neon', 'text-black', 'font-bold');
+            }
+        }
+
+        function renderAdminDashboard() {
+            if (!db.currentUser || (db.currentUser.role !== 'OWNER' && db.currentUser.role !== 'ADMIN')) return;
+
+            // Overview Stats
+            document.getElementById('adm-stat-users').innerText = db.users.length;
+            document.getElementById('adm-stat-regs').innerText = db.registrations.filter(r => r.status === 'Chờ duyệt').length;
+            document.getElementById('adm-stat-orders').innerText = db.orders.filter(o => o.status === 'Chờ xác nhận').length;
+            document.getElementById('adm-stat-services').innerText = db.services.length;
+
+            // Render Services in Admin
+            const admSrvList = document.getElementById('adm-services-list');
+            admSrvList.innerHTML = db.services.map(srv => `
+                <div class="bg-black/40 border border-[#1E2E23] rounded-2xl p-4 space-y-3">
+                    <img src="${srv.image}" class="w-full h-32 object-cover rounded-xl">
+                    <h4 class="font-bold text-white text-sm">${srv.name}</h4>
+                    <div class="text-neon font-bold">${srv.price.toLocaleString('vi-VN')}₫</div>
+                    <div class="flex justify-between pt-2">
+                        <button onclick="openEditServiceModal('${srv.id}')" class="px-3 py-1.5 bg-neon/10 border border-neon text-neon text-[10px] rounded-lg">Sửa</button>
+                        <button onclick="deleteService('${srv.id}')" class="px-3 py-1.5 bg-red-500/10 border border-red-500 text-red-400 text-[10px] rounded-lg">Xóa</button>
+                    </div>
+                </div>
+            `).join('');
+
+            // Render Registrations Table
+            const admRegsBody = document.getElementById('adm-regs-table-body');
+            admRegsBody.innerHTML = db.registrations.length === 0 ? '<tr><td colspan="6" class="p-4 text-center text-slate-500">Không có hồ sơ nào.</td></tr>' : db.registrations.map(r => `
+                <tr class="hover:bg-black/20">
+                    <td class="p-3 font-bold text-white">${r.id}</td>
+                    <td class="p-3 text-neon">${r.type}</td>
+                    <td class="p-3">${r.fullname}</td>
+                    <td class="p-3">${r.ingamename} (${r.uid})</td>
+                    <td class="p-3 text-amber-400">${r.status}</td>
+                    <td class="p-3 text-right space-x-2">
+                        <button onclick="updateRegStatus('${r.id}', 'Đã duyệt')" class="px-2.5 py-1 bg-neon text-black font-bold rounded">Duyệt</button>
+                        <button onclick="updateRegStatus('${r.id}', 'Từ chối')" class="px-2.5 py-1 bg-red-500 text-white font-bold rounded">Từ chối</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            // Render Orders Table
+            const admOrdersBody = document.getElementById('adm-orders-table-body');
+            admOrdersBody.innerHTML = db.orders.length === 0 ? '<tr><td colspan="7" class="p-4 text-center text-slate-500">Không có đơn hàng nào.</td></tr>' : db.orders.map(o => `
+                <tr class="hover:bg-black/20">
+                    <td class="p-3 font-bold text-white">${o.id}</td>
+                    <td class="p-3 text-neon">${o.serviceName}</td>
+                    <td class="p-3">${o.username}</td>
+                    <td class="p-3">${o.ingamename} (${o.uid})</td>
+                    <td class="p-3">${o.price.toLocaleString('vi-VN')}₫</td>
+                    <td class="p-3 text-amber-400">${o.status}</td>
+                    <td class="p-3 text-right">
+                        <select onchange="updateOrderStatus('${o.id}', this.value)" class="bg-black border border-[#1E2E23] text-white p-1 rounded">
+                            <option value="Chờ xác nhận" ${o.status==='Chờ xác nhận'?'selected':''}>Chờ xác nhận</option>
+                            <option value="Đang thực hiện" ${o.status==='Đang thực hiện'?'selected':''}>Đang thực hiện</option>
+                            <option value="Hoàn thành" ${o.status==='Hoàn thành'?'selected':''}>Hoàn thành</option>
+                            <option value="Đã hủy" ${o.status==='Đã hủy'?'selected':''}>Đã hủy</option>
+                        </select>
+                    </td>
+                </tr>
+            `).join('');
+
+            // Render Users Table & RBAC
+            const admUsersBody = document.getElementById('adm-users-table-body');
+            admUsersBody.innerHTML = db.users.map(u => `
+                <tr class="hover:bg-black/20">
+                    <td class="p-3 font-bold text-white">${u.username}</td>
+                    <td class="p-3 text-slate-400">${u.email}</td>
+                    <td class="p-3 text-neon font-bold">${u.role}</td>
+                    <td class="p-3 text-slate-300">${u.status}</td>
+                    <td class="p-3 text-right">
+                        ${u.username !== 'Anhung123' ? `
+                            <select onchange="updateUserRole('${u.username}', this.value)" class="bg-black border border-[#1E2E23] text-white p-1 rounded">
+                                <option value="MEMBER" ${u.role==='MEMBER'?'selected':''}>Member</option>
+                                <option value="ADMIN" ${u.role==='ADMIN'?'selected':''}>Admin</option>
+                                <option value="ORDER SUPPORT" ${u.role==='ORDER SUPPORT'?'selected':''}>Order Support</option>
+                                <option value="MEMBER MANAGER" ${u.role==='MEMBER MANAGER'?'selected':''}>Member Manager</option>
+                            </select>
+                        ` : '<span class="text-amber-400 italic">Owner tối cao</span>'}
+                    </td>
+                </tr>
+            `).join('');
+
+            // Render Audit Logs
+            const admLogsBody = document.getElementById('adm-logs-table-body');
+            admLogsBody.innerHTML = db.logs.map(l => `
+                <tr class="hover:bg-black/20">
+                    <td class="p-3 text-slate-400">${l.time}</td>
+                    <td class="p-3 text-neon font-bold">${l.user}</td>
+                    <td class="p-3 text-white">${l.action}</td>
+                    <td class="p-3 text-slate-300">${l.target}</td>
+                </tr>
+            `).join('');
+        }
+
+        // Admin Actions
+        function openAddServiceModal() {
+            document.getElementById('service-modal').classList.remove('hidden');
+            document.getElementById('service-modal-title').innerText = 'THÊM DỊCH VỤ MỚI';
+            document.getElementById('srv-edit-id').value = '';
+            document.getElementById('srv-name').value = '';
+            document.getElementById('srv-price').value = '';
+            document.getElementById('srv-image').value = '';
+            document.getElementById('srv-desc').value = '';
+        }
+
+        function openEditServiceModal(id) {
+            const srv = db.services.find(s => s.id === id);
+            if (!srv) return;
+            document.getElementById('service-modal').classList.remove('hidden');
+            document.getElementById('service-modal-title').innerText = 'CHỈNH SỬA DỊCH VỤ';
+            document.getElementById('srv-edit-id').value = srv.id;
+            document.getElementById('srv-name').value = srv.name;
+            document.getElementById('srv-category').value = srv.category;
+            document.getElementById('srv-price').value = srv.price;
+            document.getElementById('srv-image').value = srv.image;
+            document.getElementById('srv-desc').value = srv.desc;
+        }
+
+        function closeServiceModal() {
+            document.getElementById('service-modal').classList.add('hidden');
+        }
+
+        function handleServiceSubmit(event) {
+            event.preventDefault();
+            const editId = document.getElementById('srv-edit-id').value;
+            const name = document.getElementById('srv-name').value;
+            const category = document.getElementById('srv-category').value;
+            const price = Number(document.getElementById('srv-price').value);
+            const image = document.getElementById('srv-image').value;
+            const desc = document.getElementById('srv-desc').value;
+
+            if (editId) {
+                const srv = db.services.find(s => s.id === editId);
+                if (srv) {
+                    srv.name = name;
+                    srv.category = category;
+                    srv.price = price;
+                    srv.image = image;
+                    srv.desc = desc;
+                }
+                db.logs.push({ time: new Date().toLocaleString('vi-VN'), user: db.currentUser.username, action: 'Chỉnh sửa dịch vụ', target: name });
+            } else {
+                const newSrv = {
+                    id: 'srv-' + Date.now(),
+                    name,
+                    category,
+                    price,
+                    image,
+                    desc,
+                    status: 'Đang mở'
+                };
+                db.services.push(newSrv);
+                db.logs.push({ time: new Date().toLocaleString('vi-VN'), user: db.currentUser.username, action: 'Thêm dịch vụ mới', target: name });
+            }
+
+            saveDB();
+            closeServiceModal();
+            renderServices();
+            renderAdminDashboard();
+            alert('Lưu dịch vụ thành công!');
+        }
+
+        function deleteService(id) {
+            if (!confirm('Bạn có chắc chắn muốn xóa dịch vụ này?')) return;
+            db.services = db.services.filter(s => s.id !== id);
+            db.logs.push({ time: new Date().toLocaleString('vi-VN'), user: db.currentUser.username, action: 'Xóa dịch vụ', target: id });
+            saveDB();
+            renderServices();
+            renderAdminDashboard();
+        }
+
+        function updateRegStatus(id, newStatus) {
+            const reg = db.registrations.find(r => r.id === id);
+            if (reg) {
+                reg.status = newStatus;
+                db.mailbox.unshift({
+                    id: 'mail-' + Date.now(),
+                    title: `Cập nhật hồ sơ đăng ký ${reg.id}`,
+                    sender: 'Ban quản trị',
+                    date: new Date().toLocaleDateString('vi-VN'),
+                    content: `Hồ sơ ${reg.id} của bạn đã chuyển sang trạng thái: ${newStatus}.`,
+                    read: false,
+                    type: 'system'
+                });
+                db.logs.push({ time: new Date().toLocaleString('vi-VN'), user: db.currentUser.username, action: `Cập nhật hồ sơ thành ${newStatus}`, target: id });
+                saveDB();
+                renderProfile();
+                renderAdminDashboard();
+                alert(`Đã cập nhật trạng thái hồ sơ ${id} thành ${newStatus}`);
+            }
+        }
+
+        function updateOrderStatus(id, newStatus) {
+            const ord = db.orders.find(o => o.id === id);
+            if (ord) {
+                ord.status = newStatus;
+                db.logs.push({ time: new Date().toLocaleString('vi-VN'), user: db.currentUser.username, action: `Cập nhật đơn hàng thành ${newStatus}`, target: id });
+                saveDB();
+                renderProfile();
+                renderAdminDashboard();
+                alert(`Đã cập nhật đơn hàng ${id} thành ${newStatus}`);
+            }
+        }
+
+        function updateUserRole(username, newRole) {
+            const user = db.users.find(u => u.username === username);
+            if (user) {
+                user.role = newRole;
+                db.logs.push({ time: new Date().toLocaleString('vi-VN'), user: db.currentUser.username, action: `Phân quyền tài khoản thành ${newRole}`, target: username });
+                saveDB();
+                renderAdminDashboard();
+                alert(`Đã cập nhật vai trò của ${username} thành ${newRole}`);
+            }
+        }
+
+        function handleCreateAnnouncement(event) {
+            event.preventDefault();
+            const title = document.getElementById('ann-title').value;
+            const content = document.getElementById('ann-content').value;
+
+            db.announcements.unshift({
+                id: 'ann-' + Date.now(),
+                title,
+                content,
+                date: new Date().toLocaleDateString('vi-VN'),
+                author: db.currentUser.username
+            });
+            db.logs.push({ time: new Date().toLocaleString('vi-VN'), user: db.currentUser.username, action: 'Tạo thông báo mới', target: title });
+            saveDB();
+            renderHomeContent();
+            document.getElementById('ann-title').value = '';
+            document.getElementById('ann-content').value = '';
+            alert('Đăng thông báo thành công!');
+        }
+
+        function openMassMailModal() {
+            document.getElementById('mass-mail-modal').classList.remove('hidden');
+        }
+
+        function closeMassMailModal() {
+            document.getElementById('mass-mail-modal').classList.add('hidden');
+        }
+
+        function handleSendMassMail(event) {
+            event.preventDefault();
+            const title = document.getElementById('mass-title').value;
+            const content = document.getElementById('mass-content').value;
+
+            db.mailbox.unshift({
+                id: 'mail-' + Date.now(),
+                title,
+                sender: db.currentUser.username,
+                date: new Date().toLocaleString('vi-VN'),
+                content,
+                read: false,
+                type: 'system'
+            });
+            db.logs.push({ time: new Date().toLocaleString('vi-VN'), user: db.currentUser.username, action: 'Gửi thư thông báo toàn hệ thống', target: title });
+            saveDB();
+            closeMassMailModal();
+            alert('Gửi thông báo thành công đến toàn bộ thành viên!');
+        }
+    </script>
+</body>
+</html>
